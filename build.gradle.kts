@@ -24,7 +24,6 @@ repositories {
     mavenCentral()
     jcenter()
 }
-
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("gradle-plugin"))
