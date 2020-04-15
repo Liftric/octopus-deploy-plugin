@@ -39,19 +39,32 @@ jobs:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle.kts" }}
+  integration-test:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle.kts" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: ./gradlew integrationTest
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle.kts" }}
 
 workflows:
   version: 2
   all:
     jobs:
       - build:
-          filters:
-            tags:
-              only: /.*/
+      - integration-test:
+          requires:
+            - build
       - publish-plugin:
           requires:
-            - integration-token
-            - integration-tokenfile
+            - integration-test
           filters:
             tags:
               only: /.*/
