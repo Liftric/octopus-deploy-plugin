@@ -35,7 +35,7 @@ open class UploadBuildInformationTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val (exitCode, inputText, _) = listOf(
+        val (exitCode, inputText, errorText) = listOf(
             "octo",
             "build-information",
             "--server=${octopusUrl}",
@@ -49,6 +49,7 @@ open class UploadBuildInformationTask : DefaultTask() {
         ).filterNotNull().joinToString(" ").let { shell(it) }
         if (exitCode == 0) {
             println(inputText)
+            println(errorText)
         } else {
             logger.error("octo build-information returned non-zero exitCode: $exitCode")
             logger.error(inputText)

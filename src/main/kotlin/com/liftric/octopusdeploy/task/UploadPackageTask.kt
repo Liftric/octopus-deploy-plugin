@@ -35,7 +35,7 @@ open class UploadPackageTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val (exitCode, inputText, _) = listOf(
+        val (exitCode, inputText, errorText) = listOf(
             "octo",
             "push",
             "--server=${octopusUrl}",
@@ -46,6 +46,7 @@ open class UploadPackageTask : DefaultTask() {
         ).filterNotNull().joinToString(" ").let { shell(it) }
         if (exitCode == 0) {
             println(inputText)
+            println(errorText)
         } else {
             logger.error("octo push returned non-zero exitCode: $exitCode")
             logger.error(inputText)
