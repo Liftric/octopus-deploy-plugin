@@ -58,7 +58,7 @@ workflows:
   version: 2
   all:
     jobs:
-      - build:
+      - build
       - integration-test:
           requires:
             - build
