@@ -5,20 +5,34 @@ import junit.framework.TestCase
 import java.io.File
 
 fun File.setupGitRepo() {
+    println("setupGitRepo=${this.absolutePath}")
     try {
-        this.shell("git init .").exitCode mustBe 0
-        this.shell("git add .").exitCode mustBe 0
-        this.shell("git commit -m \"initial commit\"").exitCode mustBe 0
-        this.shell("git tag first-one").exitCode mustBe 0
-        this.shell("touch secondfile").exitCode mustBe 0
-        this.shell("git add .").exitCode mustBe 0
-        this.shell("git commit -m \"second commit\"").exitCode mustBe 0
-        this.shell("git tag second-one").exitCode mustBe 0
+        verboseTestShell("git init .")
+        verboseTestShell("git add .")
+        verboseTestShell("git commit -m \"initial commit\"")
+        verboseTestShell("git tag first-one")
+        verboseTestShell("touch secondfile")
+        verboseTestShell("git add .")
+        verboseTestShell("git commit -m \"second commit\"")
+        verboseTestShell("git tag second-one")
     } catch (e: Exception) {
         println(e.message)
         e.printStackTrace()
+        val (exitCode, inputText, errorText) = this.shell("ls -lah")
+        println("exitCode=$exitCode")
+        println("inputText=$inputText")
+        println("errorText=$errorText")
         throw e
     }
+}
+
+private fun File.verboseTestShell(cmd: String) {
+    println("verboseTestShell=$cmd")
+    val (exitCode, inputText, errorText) = this.shell(cmd)
+    println("verboseTestShell exitCode=$exitCode")
+    println("verboseTestShell inputText=$inputText")
+    println("verboseTestShell errorText=$errorText")
+    exitCode mustBe 0
 }
 
 infix fun Int.mustBe(expected: Int) {
