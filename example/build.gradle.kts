@@ -1,3 +1,4 @@
+import com.liftric.octopusdeploy.api.OverwriteMode.OverwriteExisting
 import com.liftric.vault.vault
 
 plugins {
@@ -26,8 +27,12 @@ octopus {
 
     commitLinkBaseUrl = "${System.getenv("CI_PROJECT_URL")?.removeSuffix("/")}/commit"
     generateChangelogSinceLastTag = true
+
     val jar by tasks.existing(Jar::class)
-    pushPackage = jar.get().archiveFile.get().asFile
-    version = jar.get().archiveVersion.get()
     packageName = jar.get().archiveBaseName.get().removeSuffix("-")
+    version = jar.get().archiveVersion.get()
+    pushPackage = jar.get().archiveFile.get().asFile
+
+    buildInformationOverwriteMode = OverwriteExisting
+    pushOverwriteMode = OverwriteExisting
 }
