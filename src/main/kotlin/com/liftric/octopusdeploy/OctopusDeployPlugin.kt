@@ -40,15 +40,17 @@ class OctopusDeployPlugin : Plugin<Project> {
             }
         val createBuildInformationTask =
             project.tasks.create("createBuildInformation", CreateBuildInformationTask::class.java).apply {
+                val task = this
                 project.afterEvaluate {
                     if (extension.generateChangelogSinceLastTag) {
                         dependsOn(commitsSinceLastTagTask)
                     }
+                    commits = emptyList()
                     outputDir = extension.outputDir
+                    task.version = extension.version ?: error("$extensionName: didn't specify version!")
+                    packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
                 }
                 doFirst {
-                    packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
-                    version = extension.version ?: error("$extensionName: didn't specify version!")
                     commits = commitsSinceLastTagTask.commits
                     buildInformationAddition = extension.buildInformationAddition
                 }
@@ -56,22 +58,26 @@ class OctopusDeployPlugin : Plugin<Project> {
         val uploadBuildInformationTask =
             project.tasks.create("uploadBuildInformation", UploadBuildInformationTask::class.java).apply {
                 dependsOn(createBuildInformationTask)
-                doFirst {
+                val task = this
+                project.afterEvaluate {
                     apiKey = extension.apiKey ?: error("$extensionName: didn't specify apiKey!")
                     octopusUrl = extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!")
                     packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
-                    version = extension.version ?: error("$extensionName: didn't specify version!")
-                    buildInformation = createBuildInformationTask.outputFile
+                    task.version = extension.version ?: error("$extensionName: didn't specify version!")
                     overwriteMode = extension.buildInformationOverwriteMode?.name
+                }
+                doFirst {
+                    buildInformation = createBuildInformationTask.outputFile
                 }
             }
         val uploadPackageTask =
             project.tasks.create("uploadPackage", UploadPackageTask::class.java).apply {
-                doFirst {
+                val task = this
+                project.afterEvaluate {
                     apiKey = extension.apiKey ?: error("$extensionName: didn't specify apiKey!")
                     octopusUrl = extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!")
                     packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
-                    version = extension.version ?: error("$extensionName: didn't specify version!")
+                    task.version = extension.version ?: error("$extensionName: didn't specify version!")
                     packageFile = extension.pushPackage
                     overwriteMode = extension.buildInformationOverwriteMode?.name
                 }

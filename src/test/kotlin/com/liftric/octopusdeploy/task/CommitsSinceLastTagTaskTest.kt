@@ -30,7 +30,12 @@ class CommitsSinceLastTagTaskTest {
 plugins {
     id("com.liftric.octopus-deploy-plugin")
 }
-"""
+octopus {
+ apiKey = "whatever"
+ version = "whatever"
+ packageName = "whatever"
+ serverUrl = "whatever"
+}"""
             )
         }
         testProjectDir.root.setupGitRepo()

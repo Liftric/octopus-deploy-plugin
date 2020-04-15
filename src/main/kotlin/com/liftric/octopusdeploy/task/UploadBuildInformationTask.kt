@@ -4,6 +4,7 @@ import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
@@ -25,9 +26,11 @@ open class UploadBuildInformationTask : DefaultTask() {
     lateinit var version: String
 
     @Input
+    @Optional
     var overwriteMode: String? = null
 
     @InputFile
+    @Optional
     var buildInformation: File? = null
 
     @TaskAction

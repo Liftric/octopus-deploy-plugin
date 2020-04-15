@@ -1,7 +1,7 @@
 import net.nemerosa.versioning.tasks.VersionDisplayTask
 
 plugins {
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.3.61"
     `java-gradle-plugin`
     id("org.gradle.kotlin.kotlin-dsl") version "1.3.4"
     `maven-publish`

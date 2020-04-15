@@ -23,7 +23,7 @@ open class CreateBuildInformationTask : DefaultTask() {
     @Input
     lateinit var commits: List<Commit>
     @Input
-    lateinit var buildInformationAddition: BuildInformation.() -> Unit
+    var buildInformationAddition: BuildInformation.() -> Unit = {}
 
     @OutputDirectory
     lateinit var outputDir: File
