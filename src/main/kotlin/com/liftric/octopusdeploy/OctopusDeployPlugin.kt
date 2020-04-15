@@ -44,15 +44,16 @@ class OctopusDeployPlugin : Plugin<Project> {
         val createBuildInformationTask =
             project.tasks.create("createBuildInformation", CreateBuildInformationTask::class.java).apply {
                 project.afterEvaluate {
-                    println("extension=$extension")
                     if (extension.generateChangelogSinceLastTag) {
                         dependsOn(commitsSinceLastTagTask)
                     }
+                    outputDir = extension.outputDir
                 }
                 doFirst {
                     packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
                     version = extension.version ?: error("$extensionName: didn't specify version!")
                     commits = commitsSinceLastTagTask.commits
+                    buildInformationAddition = extension.buildInformationAddition
                 }
             }
     }
