@@ -25,5 +25,9 @@ class OctopusDeployPluginTest {
         project.pluginManager.apply("com.liftric.octopus-deploy-plugin")
         assertNotNull(project.tasks.findByName("firstCommitHash"))
         assertNotNull(project.tasks.findByName("previousTag"))
+        assertNotNull(project.tasks.findByName("commitsSinceLastTag"))
+        assertNotNull(project.tasks.findByName("createBuildInformation"))
+        assertNotNull(project.tasks.findByName("uploadBuildInformation"))
+        assertNotNull(project.tasks.findByName("uploadPackage"))
     }
 }

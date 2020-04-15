@@ -43,6 +43,7 @@ class UploadBuildInformationTaskTest {
         assertEquals("Git", buildInfoItem?.vcsType)
 
         val secondResult = GradleRunner.create()
+            .forwardOutput()
             .withProjectDir(testProjectDir.root)
             .withArguments("build", "uploadBuildInformation")
             .withPluginClasspath()

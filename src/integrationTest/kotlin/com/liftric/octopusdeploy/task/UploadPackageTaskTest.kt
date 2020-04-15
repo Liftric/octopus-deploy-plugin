@@ -43,6 +43,7 @@ class UploadPackageTaskTest {
         assertEquals(".jar", packageItem?.fileExtension)
 
         val secondResult = GradleRunner.create()
+            .forwardOutput()
             .withProjectDir(testProjectDir.root)
             .withArguments("build", "uploadPackage")
             .withPluginClasspath()

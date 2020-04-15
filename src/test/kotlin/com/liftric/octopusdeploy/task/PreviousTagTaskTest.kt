@@ -20,6 +20,7 @@ class PreviousTagTaskTest {
         println(testProjectDir.root.absolutePath)
         setupBuild()
         val result = GradleRunner.create()
+            .forwardOutput()
             .withProjectDir(testProjectDir.root)
             .withArguments("previousTag")
             .withPluginClasspath()
