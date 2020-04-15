@@ -3,8 +3,7 @@ package com.liftric.octopusdeploy.task
 import com.liftric.octopusdeploy.api.Commit
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import java.io.File
 
 open class CommitsSinceLastTagTask : DefaultTask() {
@@ -14,15 +13,20 @@ open class CommitsSinceLastTagTask : DefaultTask() {
         outputs.upToDateWhen { false }
     }
 
-    @Input
+    @InputDirectory
     lateinit var workingDir: File
 
     @Input
     lateinit var commitLinkBaseUrl: String
 
+    @InputFile
+    @Optional
     var firstCommitFile: File? = null
+    @InputFile
+    @Optional
     var previousTagFile: File? = null
 
+    @Input
     var commits: List<Commit> = emptyList()
 
     @TaskAction

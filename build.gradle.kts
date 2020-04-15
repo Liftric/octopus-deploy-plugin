@@ -55,6 +55,9 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+    withType<Test> {
+        testLogging.showStandardStreams = true
+    }
     withType<VersionDisplayTask> {
         doLast {
             println("[VersionDisplayTask] version=$version")

@@ -2,6 +2,8 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
@@ -12,14 +14,20 @@ open class UploadBuildInformationTask : DefaultTask() {
         outputs.upToDateWhen { false }
     }
 
+    @Input
     lateinit var octopusUrl: String
+    @Input
     lateinit var apiKey: String
 
+    @Input
     lateinit var packageName: String
+    @Input
     lateinit var version: String
 
+    @Input
     var overwriteMode: String? = null
 
+    @InputFile
     var buildInformation: File? = null
 
     @TaskAction
