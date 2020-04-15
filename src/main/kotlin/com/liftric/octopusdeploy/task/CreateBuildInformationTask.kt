@@ -42,7 +42,6 @@ open class CreateBuildInformationTask : DefaultTask() {
                     buildInformationAddition()
                 }).also { println(it) }
             )
-
         }
     }
 }

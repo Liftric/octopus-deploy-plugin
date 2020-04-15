@@ -1,9 +1,6 @@
 package com.liftric.octopusdeploy
 
-import com.liftric.octopusdeploy.task.CommitsSinceLastTagTask
-import com.liftric.octopusdeploy.task.CreateBuildInformationTask
-import com.liftric.octopusdeploy.task.FirstCommitHashTask
-import com.liftric.octopusdeploy.task.PreviousTagTask
+import com.liftric.octopusdeploy.task.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -54,6 +51,18 @@ class OctopusDeployPlugin : Plugin<Project> {
                     version = extension.version ?: error("$extensionName: didn't specify version!")
                     commits = commitsSinceLastTagTask.commits
                     buildInformationAddition = extension.buildInformationAddition
+                }
+            }
+        val uploadBuildInformationTask =
+            project.tasks.create("UploadBuildInformationTask", UploadBuildInformationTask::class.java).apply {
+                dependsOn(createBuildInformationTask)
+                doFirst {
+                    apiKey = extension.apiKey ?: error("$extensionName: didn't specify apiKey!")
+                    octopusUrl = extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!")
+                    packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
+                    version = extension.version ?: error("$extensionName: didn't specify version!")
+                    buildInformation = createBuildInformationTask.outputFile
+                    overwriteMode = extension.buildInformationOverwriteMode?.name
                 }
             }
     }

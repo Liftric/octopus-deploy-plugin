@@ -1,6 +1,7 @@
 package com.liftric.octopusdeploy
 
 import com.liftric.octopusdeploy.api.BuildInformation
+import com.liftric.octopusdeploy.api.OverwriteMode
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -27,6 +28,9 @@ open class OctopusDeployExtension(project: Project) {
      */
     var commitLinkBaseUrl: String = "http://git.example.com/repo/commits/"
 
+    /**
+     * Output folder for files genereated by the plugin
+     */
     @OutputDirectory
     var outputDir: File = project.file("${project.buildDir}/$extensionName")
 
@@ -50,6 +54,15 @@ open class OctopusDeployExtension(project: Project) {
      */
     @Input
     var packageName: String? = null
+
+    /**
+     * octo build-information OverwriteMode
+     */
+    var buildInformationOverwriteMode: OverwriteMode? = null
+    /**
+     * octo push OverwriteMode
+     */
+    var pushOverwriteMode: OverwriteMode? = null
 
     /**
      * Customize the final octopus build-information before uploading
