@@ -9,6 +9,8 @@ fun File.setupGitRepo() {
     try {
         verboseTestShell("git init .")
         verboseTestShell("git add .")
+        verboseTestShell("git config user.email \"you@example.com\"")
+        verboseTestShell("git config user.name \"Your Name\"")
         verboseTestShell("git commit -m \"initial commit\"")
         verboseTestShell("git tag first-one")
         verboseTestShell("touch secondfile")

@@ -9,11 +9,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle.kts" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run:
-          command: |
-            git config --global user.email "you@example.com"
-            git config --global user.name "Your Name"
-            ./gradlew build
+      - run: ./gradlew build
       - run:
           name: Save test results
           command: |
