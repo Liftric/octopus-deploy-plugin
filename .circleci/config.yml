@@ -70,8 +70,14 @@ workflows:
   version: 2
   all:
     jobs:
-      - build
-      - integration-test
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - integration-test:
+          filters:
+            tags:
+              only: /.*/
       - publish-plugin:
           requires:
             - build
