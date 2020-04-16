@@ -72,7 +72,7 @@ packageName | Package name | -
 buildInformationOverwriteMode | octo build-information OverwriteMode | -
 pushOverwriteMode | octo push OverwriteMode | -
 buildInformationAddition | Customize the final octopus build-information before uploading | {}
-gitlab() | Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI | not applied
+gitlab() | Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`. | not applied
 
 `generateChangelogSinceLastTag` extracts all commits between the HEAD and the last tag. 
 If no tag is found, the first commit in the history tree is used instead.

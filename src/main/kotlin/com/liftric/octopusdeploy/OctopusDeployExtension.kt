@@ -13,6 +13,7 @@ open class OctopusDeployExtension(project: Project) {
      * Octopus deploy server API key
      */
     var apiKey: String? = null
+
     /**
      * Octopus deploy server URL
      */
@@ -44,11 +45,13 @@ open class OctopusDeployExtension(project: Project) {
      */
     @InputFile
     var pushPackage: File? = null
+
     /**
      * Package version.
      */
     @Input
     var version: String? = null
+
     /**
      * Package name
      */
@@ -59,6 +62,7 @@ open class OctopusDeployExtension(project: Project) {
      * octo build-information OverwriteMode
      */
     var buildInformationOverwriteMode: OverwriteMode? = null
+
     /**
      * octo push OverwriteMode
      */
@@ -70,9 +74,10 @@ open class OctopusDeployExtension(project: Project) {
     var buildInformationAddition: BuildInformation.() -> Unit = {}
 
     /**
-     * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI
+     * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`.
      */
     fun gitlab(): Unit {
+        commitLinkBaseUrl = "${System.getenv("CI_PROJECT_URL")?.removeSuffix("/")}/commit/"
         buildInformationAddition = {
             BuildEnvironment = if (System.getenv("CI") != null) {
                 "GitLabCI"
