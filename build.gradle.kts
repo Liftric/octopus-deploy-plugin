@@ -5,7 +5,7 @@ plugins {
     `java-gradle-plugin`
     id("org.gradle.kotlin.kotlin-dsl") version "1.3.4"
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.10.1"
+    id("com.gradle.plugin-publish") version "0.11.0"
     id("net.nemerosa.versioning") version "2.12.0"
     id("com.avast.gradle.docker-compose") version "0.10.7"
 }
