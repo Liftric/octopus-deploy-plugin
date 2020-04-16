@@ -11,7 +11,7 @@ import java.io.File
 open class UploadPackageTask : DefaultTask() {
     init {
         group = "octopus"
-        description = "Uploades the package to octopus."
+        description = "Uploads the package to octopus."
         outputs.upToDateWhen { false }
     }
 

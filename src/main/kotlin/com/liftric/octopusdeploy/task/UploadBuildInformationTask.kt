@@ -11,7 +11,7 @@ import java.io.File
 open class UploadBuildInformationTask : DefaultTask() {
     init {
         group = "octopus"
-        description = "Uploades the created octopus build-information file."
+        description = "Uploads the created octopus build-information file."
         outputs.upToDateWhen { false }
     }
 
