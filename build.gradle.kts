@@ -3,10 +3,11 @@ import net.nemerosa.versioning.tasks.VersionDisplayTask
 plugins {
     kotlin("jvm") version "1.3.61"
     `java-gradle-plugin`
-    id("org.gradle.kotlin.kotlin-dsl") version "1.3.3"
+    id("org.gradle.kotlin.kotlin-dsl") version "1.3.4"
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.10.1"
+    id("com.gradle.plugin-publish") version "0.11.0"
     id("net.nemerosa.versioning") version "2.12.0"
+    id("com.avast.gradle.docker-compose") version "0.10.7"
 }
 
 group = "com.liftric.octopusdeploy"
@@ -19,12 +20,22 @@ allprojects {
         }
     }
 }
-
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output
+        compileClasspath += sourceSets.test.get().output
+        runtimeClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.test.get().output
+    }
+}
+val integrationTestImplementation by configurations.getting {
+    extendsFrom(configurations.testImplementation.get())
+}
+configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
 repositories {
     mavenCentral()
     jcenter()
 }
-
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("gradle-plugin"))
@@ -33,14 +44,22 @@ dependencies {
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
+    integrationTestImplementation("junit:junit:4.12")
+    integrationTestImplementation("org.apache.httpcomponents:httpclient:4.5.12")
 }
-
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+    withType<Test> {
+        testLogging.showStandardStreams = true
     }
     withType<VersionDisplayTask> {
         doLast {
@@ -74,6 +93,20 @@ tasks {
     }
     val publishPlugins by existing
     publishPlugins.get().dependsOn(setupPluginsLogin)
+
+    //
+    val composeUp by existing
+    val composeDownForced by existing
+    val integrationTest by creating(Test::class) {
+        description = "Runs integration tests."
+        group = "verification"
+
+        testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+        classpath = sourceSets["integrationTest"].runtimeClasspath
+        shouldRunAfter("test")
+        dependsOn(composeUp)
+        finalizedBy(composeDownForced)
+    }
 }
 publishing {
     repositories {
@@ -95,4 +128,12 @@ pluginBundle {
     vcsUrl = "https://github.com/Liftric/octopus-deploy-plugin"
     description = "Common tasks for Octopus Deploy interaction, like package or build-information uploading"
     tags = listOf("octopus", "deploy", "releases", "build-information", "upload", "packages")
+}
+dockerCompose {
+    useComposeFiles = listOf("docker-compose.yml")
+    waitForTcpPorts = true
+    captureContainersOutput = true
+    stopContainers = true
+    removeContainers = true
+    buildBeforeUp = true
 }
