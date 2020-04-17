@@ -25,7 +25,7 @@ class FirstCommitHashTaskTest {
             .withPluginClasspath()
             .build()
         println(result.output)
-        result.task(":firstCommitHash")?.outcome == TaskOutcome.SUCCESS
+        assertEquals(TaskOutcome.SUCCESS, result.task(":firstCommitHash")?.outcome)
         File("${testProjectDir.root.absolutePath}/build/$extensionName/firstCommitHash").apply {
             assertTrue(exists())
             assertEquals("9c82501b25fd6c03bd6f3074739496b498cf3938", readText())

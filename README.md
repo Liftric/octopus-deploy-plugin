@@ -56,7 +56,7 @@ For Java archives, `<name>-<version>.<extension>` is conventional, so should be 
 Otherwise the first version number part will be parsed as part of the name.
 
 ## configuration
-After the plugin is applied, the vault extension is registered with the following settings:
+After the plugin is applied, the octopus extension is registered with the following settings:
 
 Property | Description | default value 
 ---|---|---

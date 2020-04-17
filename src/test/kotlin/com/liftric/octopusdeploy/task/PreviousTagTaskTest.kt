@@ -26,7 +26,7 @@ class PreviousTagTaskTest {
             .withPluginClasspath()
             .build()
         println(result.output)
-        result.task(":previousTag")?.outcome == TaskOutcome.SUCCESS
+        assertEquals(TaskOutcome.SUCCESS, result.task(":previousTag")?.outcome)
         File("${testProjectDir.root.absolutePath}/build/$extensionName/previousTagName").apply {
             assertTrue(exists())
             assertEquals("first-one", readText())

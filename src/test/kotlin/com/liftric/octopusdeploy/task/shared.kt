@@ -2,6 +2,7 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import junit.framework.TestCase
+import junit.framework.TestCase.assertEquals
 import java.io.File
 
 fun File.setupGitRepo() {
@@ -38,5 +39,5 @@ private fun File.verboseTestShell(cmd: String) {
 }
 
 infix fun Int.mustBe(expected: Int) {
-    TestCase.assertEquals(expected, this)
+    assertEquals(expected, this)
 }

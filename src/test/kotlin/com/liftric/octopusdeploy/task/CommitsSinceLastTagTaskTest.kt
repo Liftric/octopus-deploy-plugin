@@ -1,5 +1,7 @@
 package com.liftric.octopusdeploy.task
 
+import junit.framework.TestCase
+import junit.framework.TestCase.assertEquals
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
@@ -21,7 +23,7 @@ class CommitsSinceLastTagTaskTest {
             .withPluginClasspath()
             .build()
         println(result.output)
-        result.task(":commitsSinceLastTag")?.outcome == TaskOutcome.SUCCESS
+        assertEquals(TaskOutcome.SUCCESS, result.task(":commitsSinceLastTag")?.outcome)
     }
 
     fun setupBuild() {
