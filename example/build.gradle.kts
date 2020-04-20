@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.targets.js.npm.importedPackageDir
+import com.liftric.octopusdeploy.task.*
+
 plugins {
     java
     id("com.liftric.octopus-deploy-plugin") version "whatever"
@@ -13,6 +16,11 @@ tasks {
             "${archiveBaseName.get()
                 .removeSuffix("-")}.${archiveVersion.get()}.${archiveExtension.get()}"
         )
+    }
+    val devToDemo by creating(PromoteReleaseTask::class) {
+        projectName.set("example-project")
+        from.set("dev")
+        to.set("demo")
     }
 }
 octopus {

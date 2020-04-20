@@ -42,12 +42,29 @@ commitsSinceLastTag | Calls git log to receive all commits since the previous ta
 createBuildInformation | Creates the octopus build-information file.
 uploadBuildInformation | Uploads the created octopus build-information file.
 uploadPackage | Uploads the package to octopus.
+PromoteReleaseTask | Promotes octopus project from one environment to another
 
 For normale use-cases, only `uploadBuildInformation` are `uploadPackage` are needed to call explicitly. Depending
 task will be called implicitly by both as needed.
 
 **Noteworthy**: The build-information can be uploaded before the package itself. 
 Useful when creating automatic releases and using the commits in the release notes in octopus.
+
+### PromoteReleaseTask
+The PromoteReleaseTask has no default implementation and must be created explicitly:
+```kotlin
+import com.liftric.octopusdeploy.task.PromoteReleaseTask
+[...]
+tasks {
+    val devToDemo by creating(PromoteReleaseTask::class) {
+        projectName.set("example-project")
+        from.set("dev")
+        to.set("demo")
+    }
+}
+```
+Calling `./gradlew devToDemo` on this example will promote the current **from** release of the octopus project **example-project**
+to the **to** environment.
 
 ## naming
 Octopus deploy expects the name and version in the following format: `<name>.<version>.<extension>`

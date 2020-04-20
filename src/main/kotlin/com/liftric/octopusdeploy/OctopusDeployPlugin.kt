@@ -82,6 +82,12 @@ class OctopusDeployPlugin : Plugin<Project> {
                     overwriteMode = extension.buildInformationOverwriteMode?.name
                 }
             }
+        project.tasks.withType(PromoteReleaseTask::class.java) {
+            project.afterEvaluate {
+                apiKey.set(extension.apiKey ?: error("$extensionName: didn't specify apiKey!"))
+                octopusUrl.set(extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!"))
+            }
+        }
     }
 }
 
