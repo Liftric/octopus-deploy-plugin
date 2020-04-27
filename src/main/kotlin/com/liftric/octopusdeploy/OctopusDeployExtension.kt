@@ -3,21 +3,23 @@ package com.liftric.octopusdeploy
 import com.liftric.octopusdeploy.api.BuildInformation
 import com.liftric.octopusdeploy.api.OverwriteMode
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.kotlin.dsl.property
 import java.io.File
 
 open class OctopusDeployExtension(project: Project) {
     /**
      * Octopus deploy server API key
      */
-    var apiKey: String? = null
+    val apiKey: Property<String> = project.objects.property()
 
     /**
      * Octopus deploy server URL
      */
-    var serverUrl: String? = null
+    val serverUrl: Property<String> = project.objects.property()
 
     /**
      * Enable to calculate the commits for the changelog when uploading build-information

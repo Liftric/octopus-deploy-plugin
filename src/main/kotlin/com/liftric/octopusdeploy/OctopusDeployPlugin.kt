@@ -60,8 +60,8 @@ class OctopusDeployPlugin : Plugin<Project> {
                 dependsOn(createBuildInformationTask)
                 val task = this
                 project.afterEvaluate {
-                    apiKey = extension.apiKey ?: error("$extensionName: didn't specify apiKey!")
-                    octopusUrl = extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!")
+                    apiKey.set(extension.apiKey)
+                    octopusUrl.set(extension.serverUrl)
                     packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
                     task.version = extension.version ?: error("$extensionName: didn't specify version!")
                     overwriteMode = extension.buildInformationOverwriteMode?.name
@@ -74,8 +74,8 @@ class OctopusDeployPlugin : Plugin<Project> {
             project.tasks.create("uploadPackage", UploadPackageTask::class.java).apply {
                 val task = this
                 project.afterEvaluate {
-                    apiKey = extension.apiKey ?: error("$extensionName: didn't specify apiKey!")
-                    octopusUrl = extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!")
+                    apiKey.set(extension.apiKey)
+                    octopusUrl.set(extension.serverUrl)
                     packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
                     task.version = extension.version ?: error("$extensionName: didn't specify version!")
                     packageFile = extension.pushPackage

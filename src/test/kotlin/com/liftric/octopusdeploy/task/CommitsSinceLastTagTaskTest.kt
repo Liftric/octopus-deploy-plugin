@@ -34,10 +34,10 @@ plugins {
     id("com.liftric.octopus-deploy-plugin")
 }
 octopus {
- apiKey = "whatever"
+ apiKey.set("whatever")
  version = "whatever"
  packageName = "whatever"
- serverUrl = "whatever"
+ serverUrl.set("whatever")
 }"""
             )
         }
