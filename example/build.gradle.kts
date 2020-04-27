@@ -25,8 +25,10 @@ tasks {
 }
 octopus {
     // targets the GITROOT/docker-compose.yml ocotpus deploy instance
-    serverUrl = "http://localhost:8080/"
-    apiKey = "API-TESTTEST123TRESDTSDD"
+    serverUrl.set("http://localhost:8080/")
+    apiKey.set(provider {
+        "API-TESTTEST123TRESDTSDD"
+    })
 
     commitLinkBaseUrl = "${System.getenv("CI_PROJECT_URL")?.removeSuffix("/")}/commit"
     generateChangelogSinceLastTag = true

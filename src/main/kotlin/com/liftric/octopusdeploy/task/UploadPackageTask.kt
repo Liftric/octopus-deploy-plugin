@@ -2,10 +2,12 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import java.io.File
 
 open class UploadPackageTask : DefaultTask() {
@@ -16,9 +18,9 @@ open class UploadPackageTask : DefaultTask() {
     }
 
     @Input
-    lateinit var octopusUrl: String
+    val octopusUrl: Property<String> = project.objects.property()
     @Input
-    lateinit var apiKey: String
+    val apiKey: Property<String> = project.objects.property()
 
     @Input
     lateinit var packageName: String
@@ -38,8 +40,8 @@ open class UploadPackageTask : DefaultTask() {
         val (exitCode, inputText, errorText) = listOf(
             "octo",
             "push",
-            "--server=${octopusUrl}",
-            "--apiKey=${apiKey}",
+            "--server=${octopusUrl.get()}",
+            "--apiKey=${apiKey.get()}",
             "--package",
             packageFile?.absolutePath ?: error("couldn't find build-information.json"),
             overwriteMode?.let { "--overwrite-mode=$it" }

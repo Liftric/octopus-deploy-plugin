@@ -73,8 +73,8 @@ tasks {
     }
 }
 octopus {
-    serverUrl = "$serverUrl"
-    apiKey = "$apiKey"
+    serverUrl.set("$serverUrl")
+    apiKey.set("$apiKey")
 
     generateChangelogSinceLastTag = true
 

@@ -40,11 +40,11 @@ plugins {
     id("com.liftric.octopus-deploy-plugin")
 }
 octopus {
-    apiKey = "fakefake"
+    apiKey.set("fakefake")
     gitRoot = file("${File(".").absolutePath}")
     version = "whatever"
     packageName = "whatever"
-    serverUrl = "whatever"
+    serverUrl.set("whatever")
 }
 """
             )
