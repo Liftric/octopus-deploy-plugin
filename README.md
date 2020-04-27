@@ -94,7 +94,7 @@ gitlab() | Default `buildInformationAddition` implementation adding context from
 `generateChangelogSinceLastTag` extracts all commits between the HEAD and the last tag. 
 If no tag is found, the first commit in the history tree is used instead.
 
-You can configure `serverUrl` and `apiKey` using a provider which enables configuring them on demand, not on confuration time:
+You can configure `serverUrl` and `apiKey` using a provider which enables configuring them on demand, not on configuration time:
 ```
 apiKey.set(provider {
         "API-TESTTEST123TRESDTSDD"
