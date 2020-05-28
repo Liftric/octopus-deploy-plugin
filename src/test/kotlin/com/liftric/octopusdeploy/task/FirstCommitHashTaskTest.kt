@@ -42,8 +42,8 @@ plugins {
 octopus {
     apiKey.set("fakefake")
     gitRoot = file("${File(".").absolutePath}")
-    version = "whatever"
-    packageName = "whatever"
+    version.set("whatever")
+    packageName.set("whatever")
     serverUrl.set("whatever")
 }
 """

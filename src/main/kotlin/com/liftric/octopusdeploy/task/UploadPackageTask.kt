@@ -2,6 +2,7 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -19,13 +20,15 @@ open class UploadPackageTask : DefaultTask() {
 
     @Input
     val octopusUrl: Property<String> = project.objects.property()
+
     @Input
     val apiKey: Property<String> = project.objects.property()
 
     @Input
-    lateinit var packageName: String
+    val packageName: Property<String> = project.objects.property()
+
     @Input
-    lateinit var version: String
+    val version: Property<String> = project.objects.property()
 
     @Input
     @Optional
@@ -33,7 +36,7 @@ open class UploadPackageTask : DefaultTask() {
 
     @Optional
     @InputFile
-    var packageFile: File? = null
+    val packageFile: RegularFileProperty = project.objects.fileProperty()
 
     @TaskAction
     fun execute() {
@@ -43,7 +46,7 @@ open class UploadPackageTask : DefaultTask() {
             "--server=${octopusUrl.get()}",
             "--apiKey=${apiKey.get()}",
             "--package",
-            packageFile?.absolutePath ?: error("couldn't find build-information.json"),
+            packageFile.get().asFile.absolutePath ?: error("couldn't find build-information.json"),
             overwriteMode?.let { "--overwrite-mode=$it" }
         ).filterNotNull().joinToString(" ").let { shell(it) }
         if (exitCode == 0) {

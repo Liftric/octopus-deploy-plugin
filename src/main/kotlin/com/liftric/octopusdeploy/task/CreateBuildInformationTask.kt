@@ -6,7 +6,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.liftric.octopusdeploy.api.BuildInformation
 import com.liftric.octopusdeploy.api.Commit
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.property
 import java.io.File
 
 open class CreateBuildInformationTask : DefaultTask() {
@@ -17,11 +19,14 @@ open class CreateBuildInformationTask : DefaultTask() {
     }
 
     @Input
-    lateinit var packageName: String
+    val packageName: Property<String> = project.objects.property()
+
     @Input
-    lateinit var version: String
+    val version: Property<String> = project.objects.property()
+
     @Input
     lateinit var commits: List<Commit>
+
     @Input
     var buildInformationAddition: BuildInformation.() -> Unit = {}
 
@@ -40,8 +45,8 @@ open class CreateBuildInformationTask : DefaultTask() {
                     propertyNamingStrategy = PropertyNamingStrategy.UPPER_CAMEL_CASE
                     setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 }.writeValueAsString(BuildInformation().apply {
-                    PackageId = packageName
-                    Version = version
+                    PackageId = packageName.get()
+                    Version = version.get()
                     VcsType = "Git"
                     Commits = commits
                     buildInformationAddition()

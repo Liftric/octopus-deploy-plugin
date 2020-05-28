@@ -47,8 +47,8 @@ class OctopusDeployPlugin : Plugin<Project> {
                     }
                     commits = emptyList()
                     outputDir = extension.outputDir
-                    task.version = extension.version ?: error("$extensionName: didn't specify version!")
-                    packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
+                    packageName.set(extension.packageName)
+                    task.version.set(extension.version)
                 }
                 doFirst {
                     commits = commitsSinceLastTagTask.commits
@@ -62,8 +62,8 @@ class OctopusDeployPlugin : Plugin<Project> {
                 project.afterEvaluate {
                     apiKey.set(extension.apiKey)
                     octopusUrl.set(extension.serverUrl)
-                    packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
-                    task.version = extension.version ?: error("$extensionName: didn't specify version!")
+                    packageName.set(extension.packageName)
+                    task.version.set(extension.version)
                     overwriteMode = extension.buildInformationOverwriteMode?.name
                 }
                 doFirst {
@@ -76,9 +76,9 @@ class OctopusDeployPlugin : Plugin<Project> {
                 project.afterEvaluate {
                     apiKey.set(extension.apiKey)
                     octopusUrl.set(extension.serverUrl)
-                    packageName = extension.packageName ?: error("$extensionName: didn't specify packageName!")
-                    task.version = extension.version ?: error("$extensionName: didn't specify version!")
-                    packageFile = extension.pushPackage
+                    packageName.set(extension.packageName)
+                    task.version.set(extension.version)
+                    packageFile.set(extension.pushPackage)
                     overwriteMode = extension.buildInformationOverwriteMode?.name
                 }
             }
