@@ -23,9 +23,9 @@ open class UploadBuildInformationTask : DefaultTask() {
     val apiKey: Property<String> = project.objects.property()
 
     @Input
-    lateinit var packageName: String
+    val packageName: Property<String> = project.objects.property()
     @Input
-    lateinit var version: String
+    val version: Property<String> = project.objects.property()
 
     @Input
     @Optional

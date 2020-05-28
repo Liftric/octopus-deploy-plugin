@@ -34,8 +34,8 @@ octopus {
     generateChangelogSinceLastTag = true
 
     val jar by tasks.existing(Jar::class)
-    packageName = jar.get().archiveBaseName.get().removeSuffix("-")
-    version = jar.get().archiveVersion.get()
-    pushPackage = jar.get().archiveFile.get().asFile
+    packageName.set(jar.get().archiveBaseName.get().removeSuffix("-"))
+    version.set(jar.get().archiveVersion.get())
+    pushPackage.set(jar.get().archiveFile.get())
 
 }

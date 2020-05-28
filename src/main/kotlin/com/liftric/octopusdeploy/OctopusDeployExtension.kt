@@ -3,6 +3,7 @@ package com.liftric.octopusdeploy
 import com.liftric.octopusdeploy.api.BuildInformation
 import com.liftric.octopusdeploy.api.OverwriteMode
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -46,19 +47,19 @@ open class OctopusDeployExtension(project: Project) {
      * Target file (package) which will be uploaded to octopus.
      */
     @InputFile
-    var pushPackage: File? = null
+    val pushPackage: RegularFileProperty = project.objects.fileProperty()
 
     /**
      * Package version.
      */
     @Input
-    var version: String? = null
+    val version: Property<String> = project.objects.property()
 
     /**
      * Package name
      */
     @Input
-    var packageName: String? = null
+    val packageName: Property<String> = project.objects.property()
 
     /**
      * octo build-information OverwriteMode

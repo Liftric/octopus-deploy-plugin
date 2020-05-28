@@ -42,8 +42,8 @@ plugins {
 }
 octopus {
  apiKey.set("whatever")
- version = "whatever"
- packageName = "whatever"
+ version.set("whatever")
+ packageName.set("whatever")
  serverUrl.set("whatever")
 }
 """
