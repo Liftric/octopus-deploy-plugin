@@ -36,6 +36,6 @@ octopus {
     val jar by tasks.existing(Jar::class)
     packageName.set(jar.get().archiveBaseName.get().removeSuffix("-"))
     version.set(jar.get().archiveVersion.get())
-    pushPackage.set(jar.get().archiveFile.get())
+    pushPackage.set(jar.get().archiveFile)
 
 }

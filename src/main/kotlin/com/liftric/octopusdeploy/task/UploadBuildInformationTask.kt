@@ -45,8 +45,8 @@ open class UploadBuildInformationTask : DefaultTask() {
             "--file",
             buildInformation?.absolutePath ?: error("couldn't find build-information.json"),
             "--package-id",
-            packageName,
-            "--version=$version",
+            packageName.get(),
+            "--version=${version.get()}",
             overwriteMode?.let { "--overwrite-mode=$it" }
         ).filterNotNull().joinToString(" ").let { shell(it) }
         if (exitCode == 0) {

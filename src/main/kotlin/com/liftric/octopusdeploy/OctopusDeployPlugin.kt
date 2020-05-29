@@ -76,8 +76,6 @@ class OctopusDeployPlugin : Plugin<Project> {
                 project.afterEvaluate {
                     apiKey.set(extension.apiKey)
                     octopusUrl.set(extension.serverUrl)
-                    packageName.set(extension.packageName)
-                    task.version.set(extension.version)
                     packageFile.set(extension.pushPackage)
                     overwriteMode = extension.buildInformationOverwriteMode?.name
                 }

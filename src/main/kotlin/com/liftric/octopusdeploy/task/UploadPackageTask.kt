@@ -25,12 +25,6 @@ open class UploadPackageTask : DefaultTask() {
     val apiKey: Property<String> = project.objects.property()
 
     @Input
-    val packageName: Property<String> = project.objects.property()
-
-    @Input
-    val version: Property<String> = project.objects.property()
-
-    @Input
     @Optional
     var overwriteMode: String? = null
 
