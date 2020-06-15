@@ -1,6 +1,6 @@
 package com.liftric.octopusdeploy
 
-import com.liftric.octopusdeploy.api.BuildInformation
+import com.liftric.octopusdeploy.api.BuildInformationCli
 import com.liftric.octopusdeploy.api.OverwriteMode
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
@@ -74,7 +74,7 @@ open class OctopusDeployExtension(project: Project) {
     /**
      * Customize the final octopus build-information before uploading
      */
-    var buildInformationAddition: BuildInformation.() -> Unit = {}
+    var buildInformationAddition: BuildInformationCli.() -> Unit = {}
 
     /**
      * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`.

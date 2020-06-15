@@ -44,7 +44,7 @@ data class BuildInformationResponse (
     val lastPageNumber: Long? = null,
 
     @get:JsonProperty("Items")@field:JsonProperty("Items")
-    val items: List<Item>? = null,
+    val items: List<Deployment>? = null,
 
     @get:JsonProperty("Links")@field:JsonProperty("Links")
     val links: BuildInformationResponseLinks? = null
@@ -102,7 +102,7 @@ data class PackageResponse (
     val lastPageNumber: Long? = null,
 
     @get:JsonProperty("Items")@field:JsonProperty("Items")
-    val items: List<Item>? = null,
+    val items: List<Deployment>? = null,
 
     @get:JsonProperty("Links")@field:JsonProperty("Links")
     val links: PackageResponseLinks? = null
@@ -194,7 +194,7 @@ data class Item (
     val workItems: List<Any?>? = null,
 
     @get:JsonProperty("Commits")@field:JsonProperty("Commits")
-    val commits: List<Commit>? = null,
+    val commits: List<CommitCli>? = null,
 
     @get:JsonProperty("IncompleteDataWarning")@field:JsonProperty("IncompleteDataWarning")
     val incompleteDataWarning: Any? = null,
@@ -244,7 +244,7 @@ data class PackageVersionBuildInformation (
     val workItems: List<Any?>? = null,
 
     @get:JsonProperty("Commits")@field:JsonProperty("Commits")
-    val commits: List<Commit>? = null,
+    val commits: List<CommitCli>? = null,
 
     @get:JsonProperty("IncompleteDataWarning")@field:JsonProperty("IncompleteDataWarning")
     val incompleteDataWarning: Any? = null,
