@@ -4,6 +4,35 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.liftric.octopusdeploy.rest.mapper
 
+data class ReleasesPaginatedResult(
+    @get:JsonProperty("ItemType", required = true) @field:JsonProperty("ItemType", required = true)
+    val itemType: String,
+
+    @get:JsonProperty("TotalResults", required = true) @field:JsonProperty("TotalResults", required = true)
+    val totalResults: Long,
+
+    @get:JsonProperty("ItemsPerPage", required = true) @field:JsonProperty("ItemsPerPage", required = true)
+    val itemsPerPage: Long,
+
+    @get:JsonProperty("NumberOfPages", required = true) @field:JsonProperty("NumberOfPages", required = true)
+    val numberOfPages: Long,
+
+    @get:JsonProperty("LastPageNumber", required = true) @field:JsonProperty("LastPageNumber", required = true)
+    val lastPageNumber: Long,
+
+    @get:JsonProperty("Items", required = true) @field:JsonProperty("Items", required = true)
+    val items: List<Release>,
+
+    @get:JsonProperty("Links", required = true) @field:JsonProperty("Links", required = true)
+    val links: PaginatedLinks
+) {
+    fun toJson() = mapper.writeValueAsString(this)
+
+    companion object {
+        fun fromJson(json: String) = mapper.readValue<ReleasesPaginatedResult>(json)
+    }
+}
+
 data class Release (
     @get:JsonProperty("Id", required=true)@field:JsonProperty("Id", required=true)
     val id: String,
@@ -14,8 +43,8 @@ data class Release (
     @get:JsonProperty("ChannelId", required=true)@field:JsonProperty("ChannelId", required=true)
     val channelID: String,
 
-    @get:JsonProperty("ReleaseNotes", required=true)@field:JsonProperty("ReleaseNotes", required=true)
-    val releaseNotes: String,
+    @get:JsonProperty("ReleaseNotes")@field:JsonProperty("ReleaseNotes")
+    val releaseNotes: String? = null,
 
     @get:JsonProperty("ProjectDeploymentProcessSnapshotId", required=true)@field:JsonProperty("ProjectDeploymentProcessSnapshotId", required=true)
     val projectDeploymentProcessSnapshotID: String,
@@ -48,10 +77,14 @@ data class Release (
     val links: ReleaseLinks
 ) {
     fun toJson() = mapper.writeValueAsString(this)
+    override fun toString(): String {
+        return "Release(id='$id', version='$version', channelID='$channelID', projectDeploymentProcessSnapshotID='$projectDeploymentProcessSnapshotID', ignoreChannelRules=$ignoreChannelRules, assembled='$assembled', projectID='$projectID', libraryVariableSetSnapshotIDS=$libraryVariableSetSnapshotIDS, selectedPackages=$selectedPackages, projectVariableSetSnapshotID='$projectVariableSetSnapshotID', spaceID='$spaceID', links=$links)"
+    }
 
     companion object {
         fun fromJson(json: String) = mapper.readValue<Release>(json)
     }
+
 }
 
 data class SelectedPackage (

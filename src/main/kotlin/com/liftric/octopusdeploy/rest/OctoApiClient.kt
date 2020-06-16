@@ -107,5 +107,18 @@ fun main() {
     println(releases.get(releaseId).execute().body()!!)
     println(progressions.get(releaseId).execute().body()!!)
 
+    println()
+    println()
+    println()
+    println()
+    releases.allFiltered("portal-backend", "0.0.52")
+        .forEach {
+            println(it.id)
+            println(it.version)
+            println(it.links.progression)
+            val progression = progressions.get(it.id).execute().body()!!
+            println(progression.phases.map { "${it.name}: ${it.deployments.map { it.task!!.isCompleted }}" })
+            println("anyOngoingTask: ${progression.anyOngoingTask()}")
+        }
     octoApiClient.shutdown()
 }

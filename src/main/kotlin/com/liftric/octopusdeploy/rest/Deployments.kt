@@ -1,7 +1,7 @@
 package com.liftric.octopusdeploy.rest
 
 import com.liftric.octopusdeploy.api.Deployment
-import com.liftric.octopusdeploy.api.DeploymentsPaginated
+import com.liftric.octopusdeploy.api.DeploymentsPaginatedResult
 import org.gradle.internal.impldep.org.apache.http.client.utils.URLEncodedUtils
 import retrofit2.Call
 import retrofit2.http.GET
@@ -10,21 +10,21 @@ import java.nio.charset.Charset
 
 interface Deployments {
     @GET("/api/deployments")
-    fun getAllFirstPage(): Call<DeploymentsPaginated>
+    fun getAllFirstPage(): Call<DeploymentsPaginatedResult>
 
     @GET("/api/deployments")
-    fun getAllAtPage(@Query("skip") skip: Long, @Query("take") take: Long): Call<DeploymentsPaginated>
+    fun getAllAtPage(@Query("skip") skip: Long, @Query("take") take: Long): Call<DeploymentsPaginatedResult>
 
     //
     @GET("/api/deployments")
-    fun getFilteredFirstPage(@Query("projects") projectId: String, @Query("environments") environmentId: String): Call<DeploymentsPaginated>
+    fun getFilteredFirstPage(@Query("projects") projectId: String, @Query("environments") environmentId: String): Call<DeploymentsPaginatedResult>
 
     @GET("/api/deployments")
     fun getFilteredAtPage(
         @Query("projects") projectId: String, @Query("environments") environmentId: String, @Query("skip") skip: Long, @Query(
             "take"
         ) take: Long
-    ): Call<DeploymentsPaginated>
+    ): Call<DeploymentsPaginatedResult>
 }
 
 fun Deployments.getAllPaginated(): List<Deployment> {
@@ -53,7 +53,7 @@ fun Deployments.getFilteredPaginated(projectId: String, environmentId: String): 
     return result
 }
 
-private fun nextSkipAndTake(currentResults: DeploymentsPaginated): Pair<Long, Long> {
+private fun nextSkipAndTake(currentResults: DeploymentsPaginatedResult): Pair<Long, Long> {
     val params = URLEncodedUtils.parse(currentResults.links.pageNext!!.split("?")[1], Charset.defaultCharset())
     val nextSkip = params.first { it.name == "skip" }.value.toLong()
     val nextTake = params.first { it.name == "take" }.value.toLong()

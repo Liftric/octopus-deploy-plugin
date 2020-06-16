@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.liftric.octopusdeploy.rest.mapper
 
-data class DeploymentsPaginated(
+data class DeploymentsPaginatedResult(
     @get:JsonProperty("ItemType", required = true) @field:JsonProperty("ItemType", required = true)
     val itemType: String,
 
@@ -25,12 +25,12 @@ data class DeploymentsPaginated(
     val items: List<Deployment>,
 
     @get:JsonProperty("Links", required = true) @field:JsonProperty("Links", required = true)
-    val links: DeploymentsPaginatedLinks
+    val links: PaginatedLinks
 ) {
     fun toJson() = mapper.writeValueAsString(this)
 
     companion object {
-        fun fromJson(json: String) = mapper.readValue<DeploymentsPaginated>(json)
+        fun fromJson(json: String) = mapper.readValue<DeploymentsPaginatedResult>(json)
     }
 }
 
@@ -267,7 +267,7 @@ data class TentacleRetentionPeriod(
     val shouldKeepForever: Boolean
 )
 
-data class DeploymentsPaginatedLinks(
+data class PaginatedLinks(
     @get:JsonProperty("Self", required = true) @field:JsonProperty("Self", required = true)
     val self: String,
 

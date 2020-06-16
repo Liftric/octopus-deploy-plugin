@@ -9,3 +9,5 @@ interface Progressions {
     @GET("/api/releases/{releaseId}/progression")
     fun get(@Path("releaseId") releaseId: String): Call<Progression>
 }
+
+fun Progression.anyOngoingTask(): Boolean = phases.any { it.deployments.any { it.task?.isCompleted == false } }
