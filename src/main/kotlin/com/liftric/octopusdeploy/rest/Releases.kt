@@ -1,7 +1,5 @@
 package com.liftric.octopusdeploy.rest
 
-import com.liftric.octopusdeploy.api.Deployment
-import com.liftric.octopusdeploy.api.DeploymentsPaginatedResult
 import com.liftric.octopusdeploy.api.Release
 import com.liftric.octopusdeploy.api.ReleasesPaginatedResult
 import org.gradle.internal.impldep.org.apache.http.client.utils.URLEncodedUtils
@@ -13,13 +11,24 @@ import java.nio.charset.Charset
 
 interface Releases {
     @GET("/api/releases/{releaseId}")
-    fun get(@Path("releaseId") releaseId: String): Call<Release>
+    fun getByReleaseId(@Path("releaseId") releaseId: String): Call<Release>
+
+    @GET("/api/projects/{projectId}/releases")
+    fun getByProjectFirstPage(@Path("projectId") projectId: String): Call<ReleasesPaginatedResult>
+
+    @GET("/api/projects/{projectId}/releases")
+    fun getByProjectAtPage(
+        @Path("projectId") projectId: String,
+        @Query("skip") skip: Long,
+        @Query("take") take: Long
+    ): Call<ReleasesPaginatedResult>
 
     @GET("/api/releases")
     fun getAllFirstPage(): Call<ReleasesPaginatedResult>
 
     @GET("/api/releases")
     fun getAllAtPage(@Query("skip") skip: Long, @Query("take") take: Long): Call<ReleasesPaginatedResult>
+
 }
 
 fun Releases.getAllPaginated(): List<Release> {
@@ -29,6 +38,19 @@ fun Releases.getAllPaginated(): List<Release> {
     while (currentResults.links.pageNext != null) {
         val (nextSkip, nextTake) = nextSkipAndTake(currentResults)
         currentResults = getAllAtPage(nextSkip, nextTake).execute().body() ?: error("getAllAtPage failed!")
+        result.addAll(currentResults.items)
+    }
+    return result
+}
+
+fun Releases.getByProjectIdPaginated(projectId: String): List<Release> {
+    val result = mutableListOf<Release>()
+    var currentResults = getByProjectFirstPage(projectId).execute().body() ?: error("getAllFirstPage failed!")
+    result.addAll(currentResults.items)
+    while (currentResults.links.pageNext != null) {
+        val (nextSkip, nextTake) = nextSkipAndTake(currentResults)
+        currentResults =
+            getByProjectAtPage(projectId, nextSkip, nextTake).execute().body() ?: error("getAllAtPage failed!")
         result.addAll(currentResults.items)
     }
     return result

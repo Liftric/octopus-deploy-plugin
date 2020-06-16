@@ -1,4 +1,5 @@
 import net.nemerosa.versioning.tasks.VersionDisplayTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
     kotlin("jvm") version "1.3.61"
@@ -36,10 +37,14 @@ repositories {
     mavenCentral()
     jcenter()
 }
+val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
+
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("gradle-plugin"))
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.3")
     implementation("com.squareup.retrofit2:retrofit:2.6.2")
     implementation("com.squareup.retrofit2:converter-jackson:2.6.2")
