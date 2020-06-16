@@ -44,7 +44,7 @@ data class BuildInformationResponse (
     val lastPageNumber: Long? = null,
 
     @get:JsonProperty("Items")@field:JsonProperty("Items")
-    val items: List<Deployment>? = null,
+    val items: List<Item>? = null,
 
     @get:JsonProperty("Links")@field:JsonProperty("Links")
     val links: BuildInformationResponseLinks? = null
