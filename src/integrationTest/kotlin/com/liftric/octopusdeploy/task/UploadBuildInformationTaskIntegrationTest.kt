@@ -3,8 +3,10 @@ package com.liftric.octopusdeploy.task
 import com.liftric.octopusdeploy.apiKey
 import com.liftric.octopusdeploy.getBuildInformationResponse
 import com.liftric.octopusdeploy.serverUrl
+import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
+import org.gradle.internal.impldep.com.amazonaws.util.ValidationUtils
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
@@ -12,7 +14,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import kotlin.random.Random
 
-class UploadBuildInformationTaskTest {
+class UploadBuildInformationTaskIntegrationTest {
     @get:Rule
     val testProjectDir = TemporaryFolder()
 
@@ -84,6 +86,6 @@ octopus {
 """
             )
         }
-        testProjectDir.root.setupGitRepo()
+        testProjectDir.root.setupGitRepoCopy()
     }
 }
