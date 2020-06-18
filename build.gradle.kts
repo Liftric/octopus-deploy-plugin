@@ -1,4 +1,5 @@
 import net.nemerosa.versioning.tasks.VersionDisplayTask
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
@@ -68,6 +69,15 @@ tasks {
     }
     withType<Test> {
         testLogging.showStandardStreams = true
+        testLogging {
+            events = setOf(
+                TestLogEvent.STARTED,
+                TestLogEvent.PASSED,
+                TestLogEvent.FAILED,
+                TestLogEvent.SKIPPED
+            )
+            showStandardStreams = true
+        }
     }
     withType<VersionDisplayTask> {
         doLast {

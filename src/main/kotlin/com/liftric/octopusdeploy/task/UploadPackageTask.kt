@@ -1,6 +1,7 @@
 package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
+import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -28,17 +29,49 @@ open class UploadPackageTask : DefaultTask() {
     @Optional
     var overwriteMode: String? = null
 
+    @Input
+    @Optional
+    val packageName: Property<String> = project.objects.property()
+
+    @Input
+    @Optional
+    val version: Property<String> = project.objects.property()
+
     @Optional
     @InputFile
     val packageFile: RegularFileProperty = project.objects.fileProperty()
 
+    @Input
+    @Optional
+    val waitForReleaseDeployments: Property<Boolean> = project.objects.property()
+
+    @Input
+    @Optional
+    val waitTimeoutSeconds: Property<Long> = project.objects.property()
+
+    @Input
+    @Optional
+    val delayBetweenChecksSeconds: Property<Long> = project.objects.property()
+
+    /**
+     * Configures the http logging of the underlying okhttp client used for octopus api requests
+     */
+    @Input
+    @Optional
+    val httpLogLevel: Property<HttpLoggingInterceptor.Level> = project.objects.property()
+
     @TaskAction
     fun execute() {
+        val awaitReleases = waitForReleaseDeployments.getOrElse(false)
+        val octopusUrlValue = octopusUrl.get()
+        val apiKeyValue = apiKey.get()
+        val packageNameValue = packageName.get()
+        val versionValue = version.get()
         val (exitCode, inputText, errorText) = listOf(
             "octo",
             "push",
-            "--server=${octopusUrl.get()}",
-            "--apiKey=${apiKey.get()}",
+            "--server=$octopusUrlValue",
+            "--apiKey=$apiKeyValue",
             "--package",
             packageFile.get().asFile.absolutePath ?: error("couldn't find build-information.json"),
             overwriteMode?.let { "--overwrite-mode=$it" }
@@ -51,5 +84,16 @@ open class UploadPackageTask : DefaultTask() {
             logger.error(inputText)
             throw IllegalStateException("octo push exitCode: $exitCode")
         }
+        if (awaitReleases.not()) return
+        awaitReleaseLogic(
+            octopusUrlValue = octopusUrlValue,
+            apiKeyValue = apiKeyValue,
+            waitTimeoutSeconds = waitTimeoutSeconds.getOrElse(600),
+            delayBetweenChecksSeconds = delayBetweenChecksSeconds.getOrElse(5),
+            apiLogLevel = httpLogLevel.getOrElse(HttpLoggingInterceptor.Level.NONE),
+            checkLogic = {
+                determinAnyOngoingTask(packageNameValue = packageNameValue, versionValue = versionValue)
+            }
+        )
     }
 }

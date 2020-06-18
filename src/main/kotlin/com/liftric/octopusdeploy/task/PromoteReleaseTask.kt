@@ -5,6 +5,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 
@@ -40,18 +41,22 @@ open class PromoteReleaseTask : DefaultTask() {
     val to = project.objects.property(String::class.java)
 
     @Input
+    @Optional
     val waitForReleaseDeployments: Property<Boolean> = project.objects.property()
 
     @Input
+    @Optional
     val waitTimeoutSeconds: Property<Long> = project.objects.property()
 
     @Input
+    @Optional
     val delayBetweenChecksSeconds: Property<Long> = project.objects.property()
 
     /**
      * Configures the http logging of the underlying okhttp client used for octopus api requests
      */
     @Input
+    @Optional
     val httpLogLevel: Property<HttpLoggingInterceptor.Level> = project.objects.property()
 
     @TaskAction
