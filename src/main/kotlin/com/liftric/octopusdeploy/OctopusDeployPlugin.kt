@@ -78,6 +78,8 @@ class OctopusDeployPlugin : Plugin<Project> {
                     octopusUrl.set(extension.serverUrl)
                     packageFile.set(extension.pushPackage)
                     overwriteMode = extension.buildInformationOverwriteMode?.name
+                    packageName.set(extension.packageName)
+                    task.version.set(extension.version)
                 }
             }
         project.tasks.withType(PromoteReleaseTask::class.java) {
