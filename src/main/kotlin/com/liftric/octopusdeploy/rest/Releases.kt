@@ -2,12 +2,14 @@ package com.liftric.octopusdeploy.rest
 
 import com.liftric.octopusdeploy.api.Release
 import com.liftric.octopusdeploy.api.ReleasesPaginatedResult
-import org.gradle.internal.impldep.org.apache.http.client.utils.URLEncodedUtils
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.nio.charset.Charset
+import java.io.UnsupportedEncodingException
+import java.net.URL
+import java.net.URLDecoder
+import java.util.*
 
 interface Releases {
     @GET("/api/releases/{releaseId}")
@@ -76,8 +78,32 @@ inline fun <T> Iterable<T>.catchingFilter(predicate: (T) -> Boolean): List<T> {
 }
 
 private fun nextSkipAndTake(currentResults: ReleasesPaginatedResult): Pair<Long, Long> {
-    val params = URLEncodedUtils.parse(currentResults.links.pageNext!!.split("?")[1], Charset.defaultCharset())
-    val nextSkip = params.first { it.name == "skip" }.value.toLong()
-    val nextTake = params.first { it.name == "take" }.value.toLong()
+    val params = splitQuery(currentResults.links.pageNext)
+    val nextSkip = params.getValue("skip").first().toLong()
+    val nextTake = params.getValue("take").first().toLong()
     return Pair(nextSkip, nextTake)
+}
+
+/**
+ * https://stackoverflow.com/a/13592567
+ */
+@Throws(UnsupportedEncodingException::class)
+fun splitQuery(url: String?): MutableMap<String, MutableList<String>> {
+    val tmpUrl = URL("https://test.com$url")
+    val queryPairs: MutableMap<String, MutableList<String>> =
+        LinkedHashMap()
+    val pairs = tmpUrl.query.split("&".toRegex()).toTypedArray()
+    pairs.forEach { pair ->
+        val idx = pair.indexOf("=")
+        val key = if (idx > 0) URLDecoder.decode(pair.substring(0, idx), "UTF-8") else pair
+        if (!queryPairs.containsKey(key)) {
+            queryPairs[key] = LinkedList()
+        }
+        val value =
+            if (idx > 0 && pair.length > idx + 1) URLDecoder.decode(pair.substring(idx + 1), "UTF-8") else null
+        value?.let {
+            queryPairs[key]?.add(it)
+        }
+    }
+    return queryPairs
 }

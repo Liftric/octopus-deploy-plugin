@@ -236,9 +236,6 @@ data class Task(
     @get:JsonProperty("State", required = true) @field:JsonProperty("State", required = true)
     val state: String,
 
-    @get:JsonProperty("Completed", required = true) @field:JsonProperty("Completed", required = true)
-    val completed: String,
-
     @get:JsonProperty("QueueTime", required = true) @field:JsonProperty("QueueTime", required = true)
     val queueTime: String,
 

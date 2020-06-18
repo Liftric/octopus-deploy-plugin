@@ -1,19 +1,19 @@
 package com.liftric.octopusdeploy.rest
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.gradle.internal.impldep.org.apache.http.client.utils.URLEncodedUtils
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.nio.charset.Charset
 
 val mapper = jacksonObjectMapper().apply {
     propertyNamingStrategy = PropertyNamingStrategy.LOWER_CAMEL_CASE
     setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
 
 class OctoApiClient(
