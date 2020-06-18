@@ -65,7 +65,6 @@ open class UploadPackageTask : DefaultTask() {
         val awaitReleases = waitForReleaseDeployments.getOrElse(false)
         val octopusUrlValue = octopusUrl.get()
         val apiKeyValue = apiKey.get()
-        val versionValue = version.get()
         val (exitCode, inputText, errorText) = listOf(
             "octo",
             "push",
@@ -85,6 +84,7 @@ open class UploadPackageTask : DefaultTask() {
         }
         if (awaitReleases.not()) return
         val packageNameValue = packageName.get()
+        val versionValue = version.get()
         awaitReleaseLogic(
             octopusUrlValue = octopusUrlValue,
             apiKeyValue = apiKeyValue,
