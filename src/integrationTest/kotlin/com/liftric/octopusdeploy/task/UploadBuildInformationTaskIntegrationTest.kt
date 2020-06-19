@@ -14,7 +14,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import kotlin.random.Random
 
-class UploadBuildInformationTaskTest {
+class UploadBuildInformationTaskIntegrationTest {
     @get:Rule
     val testProjectDir = TemporaryFolder()
 
@@ -86,6 +86,6 @@ octopus {
 """
             )
         }
-        testProjectDir.root.setupGitRepo()
+        testProjectDir.root.setupGitRepoCopy()
     }
 }

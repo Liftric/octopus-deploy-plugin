@@ -1,12 +1,14 @@
 package com.liftric.octopusdeploy
 
-import com.liftric.octopusdeploy.api.BuildInformation
+import com.liftric.octopusdeploy.api.BuildInformationCli
 import com.liftric.octopusdeploy.api.OverwriteMode
+import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.kotlin.dsl.property
 import java.io.File
@@ -74,7 +76,14 @@ open class OctopusDeployExtension(project: Project) {
     /**
      * Customize the final octopus build-information before uploading
      */
-    var buildInformationAddition: BuildInformation.() -> Unit = {}
+    var buildInformationAddition: BuildInformationCli.() -> Unit = {}
+
+    /**
+     * Configures the http logging of the underlying okhttp client used for octopus api requests
+     */
+    @Input
+    @Optional
+    val httpLogLevel: Property<HttpLoggingInterceptor.Level> = project.objects.property()
 
     /**
      * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`.

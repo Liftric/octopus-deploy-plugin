@@ -1,6 +1,6 @@
 package com.liftric.octopusdeploy.task
 
-import com.liftric.octopusdeploy.api.Commit
+import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
@@ -27,7 +27,7 @@ open class CommitsSinceLastTagTask : DefaultTask() {
     var previousTagFile: File? = null
 
     @Input
-    var commits: List<Commit> = emptyList()
+    var commits: List<CommitCli> = emptyList()
 
     @TaskAction
     fun execute() {
@@ -48,7 +48,7 @@ open class CommitsSinceLastTagTask : DefaultTask() {
                     it.split("#")
                 }.filter { it.size >= 2 }
                 .map {
-                    Commit(
+                    CommitCli(
                         Id = it[0],
                         Comment = it.subList(1, it.size).joinToString(" ").replace("\\", ""),
                         LinkUrl = "${commitLinkBaseUrl.removeSuffix("/")}/${it[0]}"

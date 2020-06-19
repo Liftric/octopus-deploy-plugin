@@ -1,6 +1,6 @@
 package com.liftric.octopusdeploy.api
 
-data class BuildInformation(
+data class BuildInformationCli(
     var Id: String? = null,
     var PackageId: String? = null,
     var Version: String? = null,
@@ -14,10 +14,10 @@ data class BuildInformation(
     var VcsCommitUrl: String? = null,
     var IssueTrackerName: String? = null,
     var WorkItems: List<WorkItem>? = null,
-    var Commits: List<Commit>? = null,
+    var Commits: List<CommitCli>? = null,
     var IncompleteDataWarning: String? = null,
     var Created: String? = null,
     var LastModifiedOn: String? = null,
     var LastModifiedBy: String? = null,
-    var Links: Links? = null
+    var Links: LinksCli? = null
 )

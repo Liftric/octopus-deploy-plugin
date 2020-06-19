@@ -194,7 +194,7 @@ data class Item (
     val workItems: List<Any?>? = null,
 
     @get:JsonProperty("Commits")@field:JsonProperty("Commits")
-    val commits: List<Commit>? = null,
+    val commits: List<CommitCli>? = null,
 
     @get:JsonProperty("IncompleteDataWarning")@field:JsonProperty("IncompleteDataWarning")
     val incompleteDataWarning: Any? = null,
@@ -244,7 +244,7 @@ data class PackageVersionBuildInformation (
     val workItems: List<Any?>? = null,
 
     @get:JsonProperty("Commits")@field:JsonProperty("Commits")
-    val commits: List<Commit>? = null,
+    val commits: List<CommitCli>? = null,
 
     @get:JsonProperty("IncompleteDataWarning")@field:JsonProperty("IncompleteDataWarning")
     val incompleteDataWarning: Any? = null,

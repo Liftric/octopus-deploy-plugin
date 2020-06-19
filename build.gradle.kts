@@ -1,9 +1,9 @@
 import net.nemerosa.versioning.tasks.VersionDisplayTask
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
-    kotlin("jvm") version "1.3.61"
-    `java-gradle-plugin`
-    id("org.gradle.kotlin.kotlin-dsl") version "1.3.4"
+    `kotlin-dsl`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.11.0"
     id("net.nemerosa.versioning") version "2.12.0"
@@ -36,11 +36,20 @@ repositories {
     mavenCentral()
     jcenter()
 }
+val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
+
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("gradle-plugin"))
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.3")
+    implementation("com.squareup.retrofit2:retrofit:2.6.2")
+    implementation("com.squareup.retrofit2:converter-jackson:2.6.2")
+    implementation("com.squareup.retrofit2:converter-scalars:2.6.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.7.2")
+
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
@@ -60,6 +69,15 @@ tasks {
     }
     withType<Test> {
         testLogging.showStandardStreams = true
+        testLogging {
+            events = setOf(
+                TestLogEvent.STARTED,
+                TestLogEvent.PASSED,
+                TestLogEvent.FAILED,
+                TestLogEvent.SKIPPED
+            )
+            showStandardStreams = true
+        }
     }
     withType<VersionDisplayTask> {
         doLast {

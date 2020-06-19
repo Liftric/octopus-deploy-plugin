@@ -19,11 +19,13 @@ open class UploadBuildInformationTask : DefaultTask() {
 
     @Input
     val octopusUrl: Property<String> = project.objects.property()
+
     @Input
     val apiKey: Property<String> = project.objects.property()
 
     @Input
     val packageName: Property<String> = project.objects.property()
+
     @Input
     val version: Property<String> = project.objects.property()
 
@@ -58,4 +60,6 @@ open class UploadBuildInformationTask : DefaultTask() {
             throw IllegalStateException("octo build-information exitCode: $exitCode")
         }
     }
+
+
 }

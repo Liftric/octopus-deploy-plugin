@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import kotlin.random.Random
 
-class UploadPackageTaskTest {
+class UploadPackageTaskIntegrationTest {
     @get:Rule
     val testProjectDir = TemporaryFolder()
 
@@ -82,10 +82,11 @@ octopus {
     packageName.set(jar.get().archiveBaseName.get().removeSuffix("-"))
     version.set(jar.get().archiveVersion.get())
     pushPackage.set(jar.get().archiveFile)
+        
 }
 """
             )
         }
-        testProjectDir.root.setupGitRepo()
+        testProjectDir.root.setupGitRepoCopy()
     }
 }
