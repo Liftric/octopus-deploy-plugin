@@ -80,12 +80,14 @@ class OctopusDeployPlugin : Plugin<Project> {
                     overwriteMode = extension.buildInformationOverwriteMode?.name
                     packageName.set(extension.packageName)
                     task.version.set(extension.version)
+                    httpLogLevel.set(extension.httpLogLevel)
                 }
             }
         project.tasks.withType(PromoteReleaseTask::class.java) {
             project.afterEvaluate {
                 apiKey.set(extension.apiKey ?: error("$extensionName: didn't specify apiKey!"))
                 octopusUrl.set(extension.serverUrl ?: error("$extensionName: didn't specify serverUrl!"))
+                httpLogLevel.set(extension.httpLogLevel)
             }
         }
     }

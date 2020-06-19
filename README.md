@@ -90,6 +90,7 @@ buildInformationOverwriteMode | octo build-information OverwriteMode | -
 pushOverwriteMode | octo push OverwriteMode | -
 buildInformationAddition | Customize the final octopus build-information before uploading | {}
 gitlab() | Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`. | not applied
+httpLogLevel | configures the http logging while using the Octopus API | `HttpLoggingInterceptor.Level.NONE`
 
 `generateChangelogSinceLastTag` extracts all commits between the HEAD and the last tag. 
 If no tag is found, the first commit in the history tree is used instead.
@@ -100,4 +101,36 @@ apiKey.set(provider {
         "API-TESTTEST123TRESDTSDD"
         // read from file / vault / etc.
 })
+```
+
+### task specific configuration
+Both the **PromoteReleaseTask** and **UploadPackageTask** provide support for waiting
+for any deployment on octopus deploy and will block task finishing until all octopus deploy tasks are finished.
+
+Basically if the upload or progression triggers a release in octopus deploy, the tasks will wait until they are completed.
+
+Configuration is done on the tasks themself:
+
+Property | Description | default value 
+---|---|---
+waitForReleaseDeployments | If the task should wait | false
+waitTimeoutSeconds | max time to poll the Ocotopus API | 600
+delayBetweenChecksSeconds | how long to delay between polls | 5
+
+Example:
+```
+import com.liftric.octopusdeploy.task.PromoteReleaseTask
+import com.liftric.octopusdeploy.task.UploadPackageTask
+[...]
+tasks {
+    val devToDemo by creating(PromoteReleaseTask::class) {
+        waitForReleaseDeployments.set(true)
+        projectName.set("example-project")
+        from.set("dev")
+        to.set("staging")
+    }
+    withType<UploadPackageTask>() {
+        waitForReleaseDeployments.set(true)
+    }
+}
 ```
