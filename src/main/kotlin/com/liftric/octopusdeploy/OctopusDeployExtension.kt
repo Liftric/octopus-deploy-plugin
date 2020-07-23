@@ -86,6 +86,27 @@ open class OctopusDeployExtension(project: Project) {
     val httpLogLevel: Property<HttpLoggingInterceptor.Level> = project.objects.property()
 
     /**
+     * When parsing issues the target issue tracker name is needed. Currently only `Jira` supported
+     */
+    @Input
+    @Optional
+    val issueTrackerName: Property<String> = project.objects.property()
+
+    /**
+     * Enable Jira Issue parsing. This needs the changelog generation enabled to parse the commits there.
+     */
+    @Input
+    @Optional
+    val parseCommitsForJiraIssues: Property<Boolean> = project.objects.property()
+
+    /**
+     * For proper Jira URLs we need the base URL, something like `https://testric.atlassian.net/browse/`.
+     */
+    @Input
+    @Optional
+    val jiraBaseBrowseUrl: Property<String> = project.objects.property()
+
+    /**
      * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`.
      */
     fun gitlab(): Unit {
