@@ -48,6 +48,9 @@ class OctopusDeployPlugin : Plugin<Project> {
                     commits = emptyList()
                     outputDir = extension.outputDir
                     packageName.set(extension.packageName)
+                    issueTrackerName.set(extension.issueTrackerName)
+                    parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
+                    jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
                     task.version.set(extension.version)
                 }
                 doFirst {
@@ -77,7 +80,7 @@ class OctopusDeployPlugin : Plugin<Project> {
                     apiKey.set(extension.apiKey)
                     octopusUrl.set(extension.serverUrl)
                     packageFile.set(extension.pushPackage)
-                    overwriteMode = extension.buildInformationOverwriteMode?.name
+                    overwriteMode = extension.pushOverwriteMode?.name
                     packageName.set(extension.packageName)
                     task.version.set(extension.version)
                     httpLogLevel.set(extension.httpLogLevel)
