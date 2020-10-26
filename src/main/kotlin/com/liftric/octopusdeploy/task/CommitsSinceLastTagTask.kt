@@ -3,13 +3,16 @@ package com.liftric.octopusdeploy.task
 import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.property
 import java.io.File
 
 open class CommitsSinceLastTagTask : DefaultTask() {
     init {
         group = "octopus"
-        description = "Calls git log to receive all commits since the previous tag or the first commit of the current history."
+        description =
+            "Calls git log to receive all commits since the previous tag or the first commit of the current history."
         outputs.upToDateWhen { false }
     }
 
@@ -22,15 +25,22 @@ open class CommitsSinceLastTagTask : DefaultTask() {
     @InputFile
     @Optional
     var firstCommitFile: File? = null
+
     @InputFile
     @Optional
     var previousTagFile: File? = null
+
+    @Input
+    @Optional
+    val useShortCommitHashes: Property<Boolean> = project.objects.property()
 
     @Input
     var commits: List<CommitCli> = emptyList()
 
     @TaskAction
     fun execute() {
+        val useShortHash = useShortCommitHashes.getOrElse(true)
+
         val previousTag: String? = previousTagFile?.readText()
         if (previousTag == null) {
             logger.info("couldn't get previous tag, will use the first commit instead.")
@@ -49,7 +59,7 @@ open class CommitsSinceLastTagTask : DefaultTask() {
                 }.filter { it.size >= 2 }
                 .map {
                     CommitCli(
-                        Id = it[0],
+                        Id = it[0].shorten(useShortHash),
                         Comment = it.subList(1, it.size).joinToString(" ").replace("\\", ""),
                         LinkUrl = "${commitLinkBaseUrl.removeSuffix("/")}/${it[0]}"
                     )
@@ -65,4 +75,10 @@ open class CommitsSinceLastTagTask : DefaultTask() {
             throw IllegalStateException("git describe exitCode: $exitCode")
         }
     }
+}
+
+private fun String.shorten(useShortHash: Boolean): String = if (useShortHash && length > 6) {
+    substring(0, 7)
+} else {
+    this
 }

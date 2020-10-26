@@ -30,6 +30,7 @@ class OctopusDeployPlugin : Plugin<Project> {
             project.tasks.create("commitsSinceLastTag", CommitsSinceLastTagTask::class.java).apply {
                 dependsOn(getFirstCommitHashTask, getPreviousTagTask)
                 project.afterEvaluate {
+                    useShortCommitHashes.set(extension.useShortCommitHashes)
                     workingDir = extension.gitRoot
                     commitLinkBaseUrl = extension.commitLinkBaseUrl
                 }

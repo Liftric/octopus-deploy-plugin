@@ -94,6 +94,7 @@ httpLogLevel | configures the http logging while using the Octopus API | `HttpLo
 issueTrackerName | When parsing issues the target issue tracker name is needed. Currently only `Jira` supported | **optional/none**
 parseCommitsForJiraIssues | Enable Jira Issue parsing. This needs the changelog generation enabled to parse the commits there. | **optional/none**
 jiraBaseBrowseUrl | For proper Jira URLs we need the base URL, something like `https://testric.atlassian.net/browse/`. | **optional/none**
+useShortCommitHashes | Use short (7 char) commit hashes. | true
 
 `generateChangelogSinceLastTag` extracts all commits between the HEAD and the last tag. 
 If no tag is found, the first commit in the history tree is used instead.
