@@ -1,6 +1,5 @@
 package com.liftric.octopusdeploy.task
 
-import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -14,8 +13,17 @@ class CommitsSinceLastTagTaskTest {
 
     @Test
     fun testExecute() {
+        testCommitsSinceLastTag(expectedHashLength = 7, useLongHashes = false)
+    }
+
+    @Test
+    fun testLongHashExecute() {
+        testCommitsSinceLastTag(expectedHashLength = 40, useLongHashes = true)
+    }
+
+    private fun testCommitsSinceLastTag(expectedHashLength: Int, useLongHashes: Boolean) {
         println(testProjectDir.root.absolutePath)
-        setupBuild()
+        setupBuild(useLongHashes)
         val result = GradleRunner.create()
             .forwardOutput()
             .withProjectDir(testProjectDir.root)
@@ -24,9 +32,14 @@ class CommitsSinceLastTagTaskTest {
             .build()
         println(result.output)
         assertEquals(TaskOutcome.SUCCESS, result.task(":commitsSinceLastTag")?.outcome)
+        result.output
+            .split("\n")
+            .filter { it.startsWith("CommitCli") }
+            .firstOrNull { it.matches(Regex("CommitCli\\(Id=\\w{$expectedHashLength}?, LinkUrl=http.+?, Comment=.+?\\)")) }
+            ?: error("didn't find $expectedHashLength char commit hash!")
     }
 
-    fun setupBuild() {
+    fun setupBuild(useLongHashes: Boolean) {
         testProjectDir.newFile("build.gradle.kts").apply {
             writeText(
                 """
@@ -38,6 +51,7 @@ octopus {
  version.set("whatever")
  packageName.set("whatever")
  serverUrl.set("whatever")
+ ${if (useLongHashes) "useShortCommitHashes.set(false)" else ""}
 }"""
             )
         }

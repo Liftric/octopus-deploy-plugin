@@ -107,6 +107,13 @@ open class OctopusDeployExtension(project: Project) {
     val jiraBaseBrowseUrl: Property<String> = project.objects.property()
 
     /**
+     * Use short (7 char) commit hashes. Default is [true]
+     */
+    @Input
+    @Optional
+    val useShortCommitHashes: Property<Boolean> = project.objects.property()
+
+    /**
      * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`.
      */
     fun gitlab(): Unit {
