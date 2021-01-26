@@ -3,6 +3,8 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Liftric/octopus-deploy-plugin)
 [![CircleCI](https://circleci.com/gh/Liftric/octopus-deploy-plugin/tree/master.svg?style=svg)](https://circleci.com/gh/Liftric/octopus-deploy-plugin/tree/master)
 
+![Gradle meets Octopus Deploy](./gradle-octopus.webp)
+
 The octopus-deploy-plugin generates build-information and uploads packages and generated build-information to Octopus Deploy instances.
 
 Requirements:
@@ -138,3 +140,6 @@ tasks {
     }
 }
 ```
+
+# Credits
+Thanks to [Octopus Deploy](https://octopus.com/) for the permission to use the header image.
