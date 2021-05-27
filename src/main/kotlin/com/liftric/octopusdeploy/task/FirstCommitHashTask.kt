@@ -24,7 +24,10 @@ open class FirstCommitHashTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val (exitCode, inputText, errorText) = workingDir.shell("git log --pretty='format:%H' --reverse | head -1")
+        val (exitCode, inputText, errorText) = workingDir.shell(
+            "git log --pretty='format:%H' --reverse | head -1",
+            logger
+        )
         if (exitCode == 0) {
             logger.info("first commit hash: $inputText")
             outputFile = File(outputDir, "firstCommitHash").apply {

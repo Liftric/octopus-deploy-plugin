@@ -1,10 +1,12 @@
 package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
-import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 
+private val logger: Logger = LoggerFactory.getLogger("shared")
 fun File.setupGitRepo() {
     println("setupGitRepo=${this.absolutePath}")
     try {
@@ -21,7 +23,7 @@ fun File.setupGitRepo() {
     } catch (e: Exception) {
         println(e.message)
         e.printStackTrace()
-        val (exitCode, inputText, errorText) = this.shell("ls -lah")
+        val (exitCode, inputText, errorText) = this.shell("ls -lah", logger)
         println("exitCode=$exitCode")
         println("inputText=$inputText")
         println("errorText=$errorText")
@@ -31,7 +33,7 @@ fun File.setupGitRepo() {
 
 private fun File.verboseTestShell(cmd: String) {
     println("verboseTestShell=$cmd")
-    val (exitCode, inputText, errorText) = this.shell(cmd)
+    val (exitCode, inputText, errorText) = this.shell(cmd, logger)
     println("verboseTestShell exitCode=$exitCode")
     println("verboseTestShell inputText=$inputText")
     println("verboseTestShell errorText=$errorText")

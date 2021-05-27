@@ -48,7 +48,8 @@ open class CommitsSinceLastTagTask : DefaultTask() {
         val firstCommitHash: String =
             firstCommitFile?.readText() ?: error("couldn't read firstCommitFile!")
         val (exitCode, inputText, errorText) = workingDir.shell(
-            "git log --pretty='format:%H#%s \\(%an\\)' ${previousTag ?: firstCommitHash}..HEAD"
+            "git log --pretty='format:%H#%s \\(%an\\)' ${previousTag ?: firstCommitHash}..HEAD",
+            logger
         )
         if (exitCode == 0) {
             logger.info("previous tag: $inputText")

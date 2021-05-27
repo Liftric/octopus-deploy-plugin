@@ -2,7 +2,6 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import java.io.File
 
@@ -24,7 +23,7 @@ open class PreviousTagTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val (exitCode, inputText, errorText) = workingDir.shell("git describe --tags --abbrev=0 @^")
+        val (exitCode, inputText, errorText) = workingDir.shell("git describe --tags --abbrev=0 @^", logger)
         if (exitCode == 0) {
             logger.info("previous tag: $inputText")
             outputFile = File(outputDir, "previousTagName").apply {

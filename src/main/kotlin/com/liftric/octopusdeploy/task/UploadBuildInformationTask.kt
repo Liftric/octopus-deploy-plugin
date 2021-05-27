@@ -50,16 +50,15 @@ open class UploadBuildInformationTask : DefaultTask() {
             packageName.get(),
             "--version=${version.get()}",
             overwriteMode?.let { "--overwrite-mode=$it" }
-        ).filterNotNull().joinToString(" ").let { shell(it) }
+        ).filterNotNull().joinToString(" ").let { shell(it, logger) }
         if (exitCode == 0) {
             println(inputText)
             println(errorText)
         } else {
             logger.error("octo build-information returned non-zero exitCode: $exitCode")
-            logger.error(inputText)
+            logger.error("inputStream='$inputText'")
+            logger.error("errorStream='$errorText'")
             throw IllegalStateException("octo build-information exitCode: $exitCode")
         }
     }
-
-
 }

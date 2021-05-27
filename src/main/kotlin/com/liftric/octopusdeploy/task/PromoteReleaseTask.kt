@@ -75,7 +75,7 @@ open class PromoteReleaseTask : DefaultTask() {
             "--project=$projectNameValue",
             "--from=$fromValue",
             "--to=$toValue"
-        ).joinToString(" ").let { shell(it) }
+        ).joinToString(" ").let { shell(it, logger) }
         if (exitCode == 0) {
             println(inputText)
             println(errorText)

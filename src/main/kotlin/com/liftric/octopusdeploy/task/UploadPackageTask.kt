@@ -10,7 +10,6 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
-import java.io.File
 
 open class UploadPackageTask : DefaultTask() {
     init {
@@ -73,7 +72,7 @@ open class UploadPackageTask : DefaultTask() {
             "--package",
             packageFile.get().asFile.absolutePath ?: error("couldn't find build-information.json"),
             overwriteMode?.let { "--overwrite-mode=$it" }
-        ).filterNotNull().joinToString(" ").let { shell(it) }
+        ).filterNotNull().joinToString(" ").let { shell(it, logger) }
         if (exitCode == 0) {
             println(inputText)
             println(errorText)
