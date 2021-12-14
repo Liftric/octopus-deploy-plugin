@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: microsoft/mssql-server-linux
+    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
     environment:
       SA_PASSWORD: yourStrong(!)Password
       ACCEPT_EULA: Y
