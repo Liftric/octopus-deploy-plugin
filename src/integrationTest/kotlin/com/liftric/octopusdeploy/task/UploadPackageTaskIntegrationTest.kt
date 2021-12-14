@@ -35,10 +35,9 @@ class UploadPackageTaskIntegrationTest {
 
         val packageItem = getPackageResponse()
             .items
-            ?.filter {
+            ?.firstOrNull {
                 it.version == "$major.$minor.$micro"
             }
-            ?.firstOrNull()
         assertNotNull(packageItem)
         assertEquals(".jar", packageItem?.fileExtension)
 
