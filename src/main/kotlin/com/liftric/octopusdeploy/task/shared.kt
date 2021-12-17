@@ -5,12 +5,15 @@ import com.liftric.octopusdeploy.rest.*
 import kotlinx.coroutines.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.time.Duration
+import kotlin.time.seconds
 
 /**
  * repeatedly poll the octopus api for all releases for the given [packageNameValue] [versionValue] combination.
  *
  * @param checkLogic Remoting used to determin if any task is ongoing.
  *                   Difference between upload and progress makes this necessary.
+ * @param initialWaitSeconds Octopus server might need longer for the deployment to trigger, so we can define an
+ *                           additional, initial, minimum wait before the actual release check logic even happens
  */
 internal fun awaitReleaseLogic(
     octopusUrlValue: String,
@@ -18,7 +21,8 @@ internal fun awaitReleaseLogic(
     waitTimeoutSeconds: Long,
     delayBetweenChecksSeconds: Long,
     apiLogLevel: HttpLoggingInterceptor.Level,
-    checkLogic: OctoApiClient.() -> Boolean
+    checkLogic: OctoApiClient.() -> Boolean,
+    initialWaitSeconds: Long?
 ) {
     println("checking is upload triggered any release with auto deployment (${waitTimeoutSeconds}s max)")
 
@@ -33,6 +37,11 @@ internal fun awaitReleaseLogic(
         octoApiClient.shutdown()
     }
     runBlocking(handler) {
+        initialWaitSeconds?.let {
+            println("initial check delay: ${it}s")
+            delay(it * 1000)
+            println("initial check delay done")
+        }
         withTimeout(Duration.ofSeconds(waitTimeoutSeconds).toMillis()) {
             var anyOngoingTask = octoApiClient.checkLogic()
             while (anyOngoingTask) {

@@ -117,11 +117,12 @@ Basically if the upload or progression triggers a release in octopus deploy, the
 
 Configuration is done on the tasks themself:
 
-Property | Description | default value 
+Property | Description                                                 | default value 
 ---|---|---
-waitForReleaseDeployments | If the task should wait | false
-waitTimeoutSeconds | max time to poll the Ocotopus API | 600
-delayBetweenChecksSeconds | how long to delay between polls | 5
+waitForReleaseDeployments | If the task should wait                                     | false
+waitTimeoutSeconds | max time to poll the Ocotopus API                           | 600
+delayBetweenChecksSeconds | how long to delay between polls                             | 5
+initialWaitSeconds | initial delay before waitForReleaseDeployments logic starts | -
 
 Example:
 ```
