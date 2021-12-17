@@ -48,6 +48,14 @@ open class UploadPackageTask : DefaultTask() {
     @Optional
     val waitTimeoutSeconds: Property<Long> = project.objects.property()
 
+    /**
+     * Octopus server might need longer for the deployment to trigger, so we can define an
+     * additional, initial, minimum wait before the actual release check logic even happens
+     */
+    @Input
+    @Optional
+    val initialWaitSeconds: Property<Long> = project.objects.property()
+
     @Input
     @Optional
     val delayBetweenChecksSeconds: Property<Long> = project.objects.property()
@@ -92,7 +100,8 @@ open class UploadPackageTask : DefaultTask() {
             apiLogLevel = httpLogLevel.getOrElse(HttpLoggingInterceptor.Level.NONE),
             checkLogic = {
                 determinAnyOngoingTask(packageNameValue = packageNameValue, versionValue = versionValue)
-            }
+            },
+            initialWaitSeconds = initialWaitSeconds.orNull
         )
     }
 }
