@@ -44,27 +44,27 @@ jobs:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle.kts" }}
-  integration-test:
-    machine: true
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle.kts" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run:
-          name: Install octo cli
-          command: |
-            sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
-            curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
-            sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
-            sudo apt update && sudo apt install octopuscli
-      - run: ./gradlew integrationTest
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle.kts" }}
+#  integration-test:
+#    machine: true
+#    steps:
+#      - checkout
+#      - restore_cache:
+#          keys:
+#            - v1-dependencies-{{ checksum "build.gradle.kts" }}
+#            # fallback to using the latest cache if no exact match is found
+#            - v1-dependencies-
+#      - run:
+#          name: Install octo cli
+#          command: |
+#            sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
+#            curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
+#            sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
+#            sudo apt update && sudo apt install octopuscli
+#      - run: ./gradlew integrationTest
+#      - save_cache:
+#          paths:
+#            - ~/.gradle
+#          key: v1-dependencies-{{ checksum "build.gradle.kts" }}
 
 workflows:
   version: 2
@@ -74,14 +74,14 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - integration-test:
-          filters:
-            tags:
-              only: /.*/
+#      - integration-test:
+#          filters:
+#            tags:
+#              only: /.*/
       - publish-plugin:
           requires:
             - build
-            - integration-test
+#            - integration-test
           filters:
             tags:
               only: /.*/
