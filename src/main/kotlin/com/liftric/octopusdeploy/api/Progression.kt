@@ -242,8 +242,8 @@ data class Task(
     @get:JsonProperty("QueueTimeExpiry") @field:JsonProperty("QueueTimeExpiry")
     val queueTimeExpiry: Any? = null,
 
-    @get:JsonProperty("StartTime", required = true) @field:JsonProperty("StartTime", required = true)
-    val startTime: String,
+    @get:JsonProperty("StartTime") @field:JsonProperty("StartTime")
+    val startTime: String? = null,
 
     @get:JsonProperty("LastUpdatedTime", required = true) @field:JsonProperty("LastUpdatedTime", required = true)
     val lastUpdatedTime: String,
