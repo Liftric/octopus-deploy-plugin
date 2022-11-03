@@ -218,26 +218,26 @@ data class DeploymentDeploymentLinks(
 )
 
 data class Task(
-    @get:JsonProperty("Id", required = true) @field:JsonProperty("Id", required = true)
-    val id: String,
+    @get:JsonProperty("Id") @field:JsonProperty("Id")
+    val id: String? = null,
 
-    @get:JsonProperty("SpaceId", required = true) @field:JsonProperty("SpaceId", required = true)
-    val spaceID: String,
+    @get:JsonProperty("SpaceId") @field:JsonProperty("SpaceId")
+    val spaceID: String? = null,
 
-    @get:JsonProperty("Name", required = true) @field:JsonProperty("Name", required = true)
-    val name: String,
+    @get:JsonProperty("Name") @field:JsonProperty("Name")
+    val name: String? = null,
 
-    @get:JsonProperty("Description", required = true) @field:JsonProperty("Description", required = true)
-    val description: String,
+    @get:JsonProperty("Description") @field:JsonProperty("Description")
+    val description: String? = null,
 
-    @get:JsonProperty("Arguments", required = true) @field:JsonProperty("Arguments", required = true)
-    val arguments: Arguments,
+    @get:JsonProperty("Arguments") @field:JsonProperty("Arguments")
+    val arguments: Arguments? = null,
 
-    @get:JsonProperty("State", required = true) @field:JsonProperty("State", required = true)
-    val state: String,
+    @get:JsonProperty("State") @field:JsonProperty("State")
+    val state: String? = null,
 
-    @get:JsonProperty("QueueTime", required = true) @field:JsonProperty("QueueTime", required = true)
-    val queueTime: String,
+    @get:JsonProperty("QueueTime") @field:JsonProperty("QueueTime")
+    val queueTime: String? = null,
 
     @get:JsonProperty("QueueTimeExpiry") @field:JsonProperty("QueueTimeExpiry")
     val queueTimeExpiry: Any? = null,
@@ -245,58 +245,58 @@ data class Task(
     @get:JsonProperty("StartTime") @field:JsonProperty("StartTime")
     val startTime: String? = null,
 
-    @get:JsonProperty("LastUpdatedTime", required = true) @field:JsonProperty("LastUpdatedTime", required = true)
-    val lastUpdatedTime: String,
+    @get:JsonProperty("LastUpdatedTime") @field:JsonProperty("LastUpdatedTime")
+    val lastUpdatedTime: String? = null,
 
     @get:JsonProperty("CompletedTime") @field:JsonProperty("CompletedTime")
     val completedTime: Any? = null,
 
-    @get:JsonProperty("ServerNode", required = true) @field:JsonProperty("ServerNode", required = true)
-    val serverNode: String,
+    @get:JsonProperty("ServerNode") @field:JsonProperty("ServerNode")
+    val serverNode: String? = null,
 
-    @get:JsonProperty("Duration", required = true) @field:JsonProperty("Duration", required = true)
-    val duration: String,
+    @get:JsonProperty("Duration") @field:JsonProperty("Duration")
+    val duration: String? = null,
 
-    @get:JsonProperty("ErrorMessage", required = true) @field:JsonProperty("ErrorMessage", required = true)
-    val errorMessage: String,
+    @get:JsonProperty("ErrorMessage") @field:JsonProperty("ErrorMessage")
+    val errorMessage: String? = null,
 
-    @get:JsonProperty("HasBeenPickedUpByProcessor", required = true) @field:JsonProperty(
+    @get:JsonProperty("HasBeenPickedUpByProcessor") @field:JsonProperty(
         "HasBeenPickedUpByProcessor",
         required = true
     )
-    val hasBeenPickedUpByProcessor: Boolean,
+    val hasBeenPickedUpByProcessor: Boolean? = null,
 
-    @get:JsonProperty("IsCompleted", required = true) @field:JsonProperty("IsCompleted", required = true)
-    val isCompleted: Boolean,
+    @get:JsonProperty("IsCompleted") @field:JsonProperty("IsCompleted")
+    val isCompleted: Boolean? = null,
 
-    @get:JsonProperty("FinishedSuccessfully", required = true) @field:JsonProperty(
+    @get:JsonProperty("FinishedSuccessfully") @field:JsonProperty(
         "FinishedSuccessfully",
         required = true
     )
-    val finishedSuccessfully: Boolean,
+    val finishedSuccessfully: Boolean? = null,
 
-    @get:JsonProperty("HasPendingInterruptions", required = true) @field:JsonProperty(
+    @get:JsonProperty("HasPendingInterruptions") @field:JsonProperty(
         "HasPendingInterruptions",
         required = true
     )
-    val hasPendingInterruptions: Boolean,
+    val hasPendingInterruptions: Boolean? = null,
 
-    @get:JsonProperty("CanRerun", required = true) @field:JsonProperty("CanRerun", required = true)
-    val canRerun: Boolean,
+    @get:JsonProperty("CanRerun") @field:JsonProperty("CanRerun")
+    val canRerun: Boolean? = null,
 
-    @get:JsonProperty("HasWarningsOrErrors", required = true) @field:JsonProperty(
+    @get:JsonProperty("HasWarningsOrErrors") @field:JsonProperty(
         "HasWarningsOrErrors",
         required = true
     )
-    val hasWarningsOrErrors: Boolean,
+    val hasWarningsOrErrors: Boolean? = null,
 
-    @get:JsonProperty("Links", required = true) @field:JsonProperty("Links", required = true)
-    val links: TaskLinks
+    @get:JsonProperty("Links") @field:JsonProperty("Links")
+    val links: TaskLinks? = null
 )
 
 data class Arguments(
-    @get:JsonProperty("DeploymentId", required = true) @field:JsonProperty("DeploymentId", required = true)
-    val deploymentID: String
+    @get:JsonProperty("DeploymentId") @field:JsonProperty("DeploymentId")
+    val deploymentID: String? = null
 )
 
 data class TaskLinks(

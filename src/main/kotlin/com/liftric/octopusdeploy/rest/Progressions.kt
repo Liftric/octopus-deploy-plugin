@@ -11,4 +11,3 @@ interface Progressions {
 }
 
 fun Progression.anyOngoingTask(): Boolean = phases.any { it.deployments.any { it.task?.isCompleted == false } }
-
