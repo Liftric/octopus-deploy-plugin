@@ -7,6 +7,7 @@ import org.gradle.api.Project
 internal const val extensionName = "octopus"
 
 class OctopusDeployPlugin : Plugin<Project> {
+    @Suppress("UNUSED_VARIABLE")
     override fun apply(project: Project) {
         val extension = project.extensions.create(extensionName, OctopusDeployExtension::class.java, project)
         extension.outputDir.apply {
@@ -59,6 +60,26 @@ class OctopusDeployPlugin : Plugin<Project> {
                     buildInformationAddition = extension.buildInformationAddition
                 }
             }
+        val createBuildInformationMarkdownTask =
+            project.tasks.create("createBuildInformationMarkdown", CreateBuildInformationMarkdownTask::class.java)
+                .apply {
+                    val task = this
+                    project.afterEvaluate {
+                        if (extension.generateChangelogSinceLastTag) {
+                            dependsOn(commitsSinceLastTagTask)
+                        }
+                        commits = emptyList()
+                        packageName.set(extension.packageName)
+                        issueTrackerName.set(extension.issueTrackerName)
+                        parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
+                        jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
+                        task.version.set(extension.version)
+                    }
+                    doFirst {
+                        commits = commitsSinceLastTagTask.commits
+                        buildInformationAddition = extension.buildInformationAddition
+                    }
+                }
         val uploadBuildInformationTask =
             project.tasks.create("uploadBuildInformation", UploadBuildInformationTask::class.java).apply {
                 dependsOn(createBuildInformationTask)
@@ -93,6 +114,10 @@ class OctopusDeployPlugin : Plugin<Project> {
                 octopusUrl.set(extension.serverUrl)
                 httpLogLevel.set(extension.httpLogLevel)
             }
+        }
+        project.tasks.withType(CreateReleaseTask::class.java) {
+            apiKey.convention(extension.apiKey)
+            octopusUrl.convention(extension.serverUrl)
         }
     }
 }

@@ -28,6 +28,7 @@ class FirstCommitHashTaskTest {
         assertEquals(TaskOutcome.SUCCESS, result.task(":firstCommitHash")?.outcome)
         File("${testProjectDir.root.absolutePath}/build/$extensionName/firstCommitHash").apply {
             assertTrue(exists())
+            // this is the first commit hash of the octopus-deploy-plugin git repo itself
             assertEquals("9c82501b25fd6c03bd6f3074739496b498cf3938", readText())
         }
     }
@@ -45,6 +46,13 @@ octopus {
     version.set("whatever")
     packageName.set("whatever")
     serverUrl.set("whatever")
+}
+tasks {
+    val firstCommitHash by existing {
+        doLast {
+            println("firstCommitHash=${'$'}{file("build/octopus/firstCommitHash").readText()}")
+        }
+    }
 }
 """
             )
