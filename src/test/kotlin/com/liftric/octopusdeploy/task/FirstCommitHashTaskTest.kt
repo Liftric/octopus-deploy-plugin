@@ -46,6 +46,13 @@ octopus {
     packageName.set("whatever")
     serverUrl.set("whatever")
 }
+tasks {
+    val firstCommitHash by existing {
+        doLast {
+            println("firstCommitHash=${'$'}{file("build/octopus/firstCommitHash").readText()}")
+        }
+    }
+}
 """
             )
         }
