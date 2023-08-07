@@ -14,11 +14,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          #          needed for FirstCommitHashTaskTest
+          fetch-depth: 0
       - name: Cache
         uses: gradle/gradle-build-action@v2
       - name: Build
         run: ./gradlew build
       - name: Validate
-        run: ./gradlew check validatePlugins --continue
+        run: ./gradlew validatePlugins --continue
       - name: Publish
         run: ./gradlew publishPlugins
