@@ -80,7 +80,7 @@ open class PromoteReleaseTask : DefaultTask() {
             "promote-release",
             "--server=$octopusUrlValue",
             "--apiKey=$apiKeyValue",
-            "--project=$projectNameValue",
+            "--project=\"$projectNameValue\"",
             "--from=$fromValue",
             "--to=$toValue"
         ).joinToString(" ").let { shell(it, logger) }
