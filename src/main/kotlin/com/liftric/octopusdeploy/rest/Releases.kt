@@ -67,7 +67,7 @@ fun Releases.allFiltered(packageID: String, version: String): List<Release> = ge
 /**
  * handle exceptions as false
  */
-inline fun <T> Iterable<T>.catchingFilter(predicate: (T) -> Boolean): List<T> {
+internal inline fun <T> Iterable<T>.catchingFilter(predicate: (T) -> Boolean): List<T> {
     return filter {
         try {
             predicate(it)
