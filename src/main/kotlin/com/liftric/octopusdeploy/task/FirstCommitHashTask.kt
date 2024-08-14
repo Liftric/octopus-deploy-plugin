@@ -2,37 +2,28 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
-import java.io.File
+import org.gradle.work.DisableCachingByDefault
 
-open class FirstCommitHashTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description = "Calls git log to get the first commit hash of the current history tree"
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class FirstCommitHashTask : DefaultTask() {
+    @get:Internal
+    abstract val gitRoot: DirectoryProperty
 
-    @OutputDirectory
-    lateinit var outputDir: File
-
-    @InputDirectory
-    lateinit var workingDir: File
-
-    @OutputFile
-    @Optional
-    var outputFile: File? = null
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
 
     @TaskAction
     fun execute() {
-        val (exitCode, inputText, errorText) = workingDir.shell(
+        val (exitCode, inputText, errorText) = gitRoot.get().asFile.shell(
             "git log --pretty='format:%H' --reverse | head -1",
             logger
         )
         if (exitCode == 0) {
             logger.info("first commit hash: $inputText")
-            outputFile = File(outputDir, "firstCommitHash").apply {
-                writeText(inputText)
-            }
+            outputFile.get().asFile.writeText(inputText)
         } else {
             logger.error("git log returned non-zero exitCode: $exitCode")
             logger.error(errorText)

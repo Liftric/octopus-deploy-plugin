@@ -1,5 +1,6 @@
 package com.liftric.octopusdeploy
 
+import com.liftric.octopusdeploy.extensions.OctopusDeployExtension
 import com.liftric.octopusdeploy.task.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -7,117 +8,116 @@ import org.gradle.api.Project
 internal const val extensionName = "octopus"
 
 class OctopusDeployPlugin : Plugin<Project> {
-    @Suppress("UNUSED_VARIABLE")
     override fun apply(project: Project) {
         val extension = project.extensions.create(extensionName, OctopusDeployExtension::class.java, project)
-        extension.outputDir.apply {
-            mkdirs()
+        extension.outputDir.convention(
+            project.layout.buildDirectory.dir(extensionName)
+        )
+        extension.gitRoot.convention(
+            project.rootProject.layout.projectDirectory
+        )
+        extension.commitLinkBaseUrl.convention("https://git.example.com/repo/commits/")
+        extension.generateChangelogSinceLastTag.convention(false)
+        extension.gitlabCi.convention(false)
+        extension.useShortCommitHashes.convention(true)
+
+        val getFirstCommitHashTask = project.tasks.create("firstCommitHash", FirstCommitHashTask::class.java).apply {
+            group = "octopus"
+            description = "Calls git log to get the first commit hash of the current history tree"
+            gitRoot.set(extension.gitRoot)
+            outputFile.set(extension.outputDir.file("firstCommitHash"))
         }
-        val getFirstCommitHashTask =
-            project.tasks.create("firstCommitHash", FirstCommitHashTask::class.java).apply {
-                project.afterEvaluate {
-                    outputDir = extension.outputDir
-                    workingDir = extension.gitRoot
-                }
-            }
-        val getPreviousTagTask =
-            project.tasks.create("previousTag", PreviousTagTask::class.java).apply {
-                project.afterEvaluate {
-                    outputDir = extension.outputDir
-                    workingDir = extension.gitRoot
-                }
-            }
+
+        val getPreviousTagTask = project.tasks.create("previousTag", PreviousTagTask::class.java).apply {
+            group = "octopus"
+            description = "Calls git describe to receive the previous tag name. Will fail if no tag is found."
+            gitRoot.set(extension.gitRoot)
+            outputFile.set(extension.outputDir.file("previousTagName"))
+            mustRunAfter(getFirstCommitHashTask)
+        }
+
         val commitsSinceLastTagTask =
             project.tasks.create("commitsSinceLastTag", CommitsSinceLastTagTask::class.java).apply {
+                group = "octopus"
+                description =
+                    "Calls git log to receive all commits since the previous tag or the first commit of the current history."
+                gitRoot.set(extension.gitRoot)
+                useShortCommitHashes.set(extension.useShortCommitHashes)
+                commitLinkBaseUrl.set(extension.commitLinkBaseUrl)
+                firstCommitFile.set(getFirstCommitHashTask.outputFile)
+                previousTagFile.set(getPreviousTagTask.outputFile)
                 dependsOn(getFirstCommitHashTask, getPreviousTagTask)
-                project.afterEvaluate {
-                    useShortCommitHashes.set(extension.useShortCommitHashes)
-                    workingDir = extension.gitRoot
-                    commitLinkBaseUrl = extension.commitLinkBaseUrl
-                }
-                doFirst {
-                    firstCommitFile = getFirstCommitHashTask.outputFile
-                    previousTagFile = getPreviousTagTask.outputFile
-                }
             }
+
         val createBuildInformationTask =
             project.tasks.create("createBuildInformation", CreateBuildInformationTask::class.java).apply {
-                val task = this
-                project.afterEvaluate {
-                    if (extension.generateChangelogSinceLastTag) {
-                        dependsOn(commitsSinceLastTagTask)
-                    }
-                    commits = emptyList()
-                    outputDir = extension.outputDir
-                    packageName.set(extension.packageName)
-                    issueTrackerName.set(extension.issueTrackerName)
-                    parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
-                    jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
-                    task.version.set(extension.version)
-                }
-                doFirst {
-                    commits = commitsSinceLastTagTask.commits
-                    buildInformationAddition = extension.buildInformationAddition
-                }
+                group = "octopus"
+                description = "Creates the octopus build-information file."
+                packageName.set(extension.packageName)
+                issueTrackerName.set(extension.issueTrackerName)
+                parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
+                jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
+                version.set(extension.version)
+                buildInformationAddition.set(extension.buildInformationAdditionData)
+                gitlabCi.set(extension.gitlabCi)
+                outputFile.set(extension.outputDir.file("build-information.json"))
+                commits.set(commitsSinceLastTagTask.commits)
+                dependsOn(commitsSinceLastTagTask)
             }
-        val createBuildInformationMarkdownTask =
-            project.tasks.create("createBuildInformationMarkdown", CreateBuildInformationMarkdownTask::class.java)
-                .apply {
-                    val task = this
-                    project.afterEvaluate {
-                        if (extension.generateChangelogSinceLastTag) {
-                            dependsOn(commitsSinceLastTagTask)
-                        }
-                        commits = emptyList()
-                        packageName.set(extension.packageName)
-                        issueTrackerName.set(extension.issueTrackerName)
-                        parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
-                        jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
-                        task.version.set(extension.version)
-                    }
-                    doFirst {
-                        commits = commitsSinceLastTagTask.commits
-                        buildInformationAddition = extension.buildInformationAddition
-                    }
-                }
-        val uploadBuildInformationTask =
-            project.tasks.create("uploadBuildInformation", UploadBuildInformationTask::class.java).apply {
-                dependsOn(createBuildInformationTask)
-                val task = this
-                project.afterEvaluate {
-                    apiKey.set(extension.apiKey)
-                    octopusUrl.set(extension.serverUrl)
-                    packageName.set(extension.packageName)
-                    task.version.set(extension.version)
-                    overwriteMode = extension.buildInformationOverwriteMode?.name
-                }
-                doFirst {
-                    buildInformation = createBuildInformationTask.outputFile
-                }
-            }
-        val uploadPackageTask =
-            project.tasks.create("uploadPackage", UploadPackageTask::class.java).apply {
-                val task = this
-                project.afterEvaluate {
-                    apiKey.set(extension.apiKey)
-                    octopusUrl.set(extension.serverUrl)
-                    packageFile.set(extension.pushPackage)
-                    overwriteMode = extension.pushOverwriteMode?.name
-                    packageName.set(extension.packageName)
-                    task.version.set(extension.version)
-                    httpLogLevel.set(extension.httpLogLevel)
-                }
-            }
-        project.tasks.withType(PromoteReleaseTask::class.java) {
-            project.afterEvaluate {
-                apiKey.set(extension.apiKey)
-                octopusUrl.set(extension.serverUrl)
-                httpLogLevel.set(extension.httpLogLevel)
-            }
+
+
+        project.tasks.create("createBuildInformationMarkdown", CreateBuildInformationMarkdownTask::class.java).apply {
+            group = "octopus"
+            description = "Creates a markdown file from the build-information for octo cli release creation."
+            packageName.set(extension.packageName)
+            commits.set(commitsSinceLastTagTask.commits)
+            issueTrackerName.set(extension.issueTrackerName)
+            parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
+            jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
+            version.set(extension.version)
+            buildInformationAddition.set(extension.buildInformationAdditionData)
+            gitlabCi.set(extension.gitlabCi)
+            outputFile.set(extension.outputDir.file("build-information.md"))
+            dependsOn(commitsSinceLastTagTask)
         }
+
+        project.tasks.create("uploadBuildInformation", UploadBuildInformationTask::class.java).apply {
+            group = "octopus"
+            description = "Uploads the created octopus build-information file."
+            apiKey.set(extension.apiKey)
+            octopusUrl.set(extension.serverUrl)
+            version.set(extension.version)
+            packageName.set(extension.packageName)
+            overwriteMode.set(extension.buildInformationOverwriteMode)
+            buildInformationFile.set(createBuildInformationTask.outputFile)
+            dependsOn(createBuildInformationTask)
+        }
+
+        project.tasks.create("uploadPackage", UploadPackageTask::class.java).apply {
+            group = "octopus"
+            description = "Uploads the package to octopus."
+            apiKey.set(extension.apiKey)
+            octopusUrl.set(extension.serverUrl)
+            version.set(extension.version)
+            packageName.set(extension.packageName)
+            pushPackage.set(extension.pushPackage)
+            overwriteMode.set(extension.pushOverwriteMode)
+            httpLogLevel.set(extension.httpLogLevel)
+        }
+
+        project.tasks.withType(PromoteReleaseTask::class.java) {
+            group = "octopus"
+            description = "Promotes a release."
+            apiKey.set(extension.apiKey)
+            octopusUrl.set(extension.serverUrl)
+            httpLogLevel.set(extension.httpLogLevel)
+        }
+
         project.tasks.withType(CreateReleaseTask::class.java) {
-            apiKey.convention(extension.apiKey)
-            octopusUrl.convention(extension.serverUrl)
+            group = "octopus"
+            description = "Creates a new release."
+            apiKey.set(extension.apiKey)
+            octopusUrl.set(extension.serverUrl)
         }
     }
 }

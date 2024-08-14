@@ -7,65 +7,57 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
+import org.gradle.work.DisableCachingByDefault
 
-open class PromoteReleaseTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description = "Promotes a release."
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class PromoteReleaseTask : DefaultTask() {
+    @get:Input
+    abstract val octopusUrl: Property<String>
 
-    @Input
-    val octopusUrl = project.objects.property(String::class.java)
+    @get:Input
+    abstract val apiKey: Property<String>
 
-    @Input
-    val apiKey = project.objects.property(String::class.java)
-
-    /**
-     * Target octopus project name
-     */
-    @Input
-    val projectName = project.objects.property(String::class.java)
+    @get:Input
+    abstract val projectName: Property<String>
 
     /**
      * Source octopus environment name
      */
-    @Input
-    val from = project.objects.property(String::class.java)
+    @get:Input
+    abstract val from: Property<String>
 
     /**
      * Target octopus environment name
      */
-    @Input
-    val to = project.objects.property(String::class.java)
+    @get:Input
+    abstract val to: Property<String>
 
-    @Input
-    @Optional
-    val waitForReleaseDeployments: Property<Boolean> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val waitForReleaseDeployments: Property<Boolean>
 
-    @Input
-    @Optional
-    val waitTimeoutSeconds: Property<Long> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val waitTimeoutSeconds: Property<Long>
 
     /**
      * Octopus server might need longer for the deployment to trigger, so we can define an
      * additional, initial, minimum wait before the actual release check logic even happens
      */
-    @Input
-    @Optional
-    val initialWaitSeconds: Property<Long> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val initialWaitSeconds: Property<Long>
 
-    @Input
-    @Optional
-    val delayBetweenChecksSeconds: Property<Long> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val delayBetweenChecksSeconds: Property<Long>
 
     /**
      * Configures the http logging of the underlying okhttp client used for octopus api requests
      */
-    @Input
-    @Optional
-    val httpLogLevel: Property<HttpLoggingInterceptor.Level> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val httpLogLevel: Property<HttpLoggingInterceptor.Level>
 
     @TaskAction
     fun execute() {
