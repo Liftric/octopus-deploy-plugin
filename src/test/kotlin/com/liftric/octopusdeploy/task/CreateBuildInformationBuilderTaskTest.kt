@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.liftric.octopusdeploy.extensions.BuildInformationCli
 import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.api.WorkItem
+import com.liftric.octopusdeploy.extensions.BuildInformationAdditionBuilder
 import junit.framework.TestCase.*
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -12,7 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-class CreateBuildInformationTaskTest {
+class CreateBuildInformationBuilderTaskTest {
     @get:Rule
     val outputDir = TemporaryFolder()
 
@@ -29,8 +30,11 @@ class CreateBuildInformationTaskTest {
         val outputFileBuildInformation = outputDir.newFile("build-information.json")
         task.apply {
             packageName.set("test-package")
-            version.set("2.1.4")
             commits.set(createTestCommits())
+            version.set("2.1.4")
+            buildInformationAddition.set(BuildInformationAdditionBuilder(project).apply{
+                Id.set("foo")
+            })
             outputFile.set(outputFileBuildInformation)
             issueTrackerName.set("Jira")
             parseCommitsForJiraIssues.set(true)
@@ -40,8 +44,9 @@ class CreateBuildInformationTaskTest {
         assertTrue(task.outputFile.get().asFile.exists())
         val jsonText = task.outputFile.get().asFile.readText()
         val taskResult = jacksonObjectMapper().readValue<BuildInformationCli>(jsonText)
+        assertTrue(taskResult.Id == "foo")
         assertNotNull(taskResult.WorkItems)
-        taskResult.WorkItems?.let { workItems ->
+        taskResult.WorkItems.let { workItems ->
             assertEquals(2, workItems.size)
             workItems.verify("LIF-71", baseJiraUrl)
             workItems.verify("LIF-72", baseJiraUrl)
