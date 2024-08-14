@@ -85,7 +85,7 @@ octopus {
     serverUrl.set("$serverUrl")
     apiKey.set("$apiKey")
 
-    generateChangelogSinceLastTag = true
+    generateChangelogSinceLastTag.set(true)
 
     val jar by tasks.existing(Jar::class)
     packageName.set(jar.get().archiveBaseName.get().removeSuffix("-"))

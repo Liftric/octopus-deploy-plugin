@@ -23,7 +23,6 @@ class UploadPackageTaskWithWaitIntegrationTest {
         val micro = Random.Default.nextInt(0, 100)
         println(testProjectDir.root.absolutePath)
         setupBuild(major, minor, micro)
-
         val result = GradleRunner.create()
             .forwardOutput()
             .withProjectDir(testProjectDir.root)
@@ -82,7 +81,7 @@ octopus {
     serverUrl.set("$serverUrl")
     apiKey.set("$apiKey")
 
-    generateChangelogSinceLastTag = true
+    generateChangelogSinceLastTag.set(true)
 
     val jar by tasks.existing(Jar::class)
     packageName.set(jar.get().archiveBaseName.get().removeSuffix("-"))
