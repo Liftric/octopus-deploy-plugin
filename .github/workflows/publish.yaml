@@ -18,7 +18,7 @@ jobs:
           #          needed for FirstCommitHashTaskTest
           fetch-depth: 0
       - name: Cache
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v2.4.2
       - name: Build
         run: ./gradlew build
       - name: Validate
