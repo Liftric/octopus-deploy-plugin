@@ -5,9 +5,9 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 plugins {
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.18.0"
-    id("net.nemerosa.versioning") version "2.15.1"
-    id("com.avast.gradle.docker-compose") version "0.14.11"
+    id("com.gradle.plugin-publish") version "1.2.1"
+    id("net.nemerosa.versioning") version "3.1.0"
+    id("com.avast.gradle.docker-compose") version "0.17.7"
 }
 
 group = "com.liftric.octopusdeploy"
@@ -41,19 +41,19 @@ dependencies {
     implementation(gradleApi())
     implementation(kotlin("gradle-plugin"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
     integrationTestImplementation("junit:junit:4.13.2")
-    integrationTestImplementation("org.apache.httpcomponents:httpclient:4.5.13")
+    integrationTestImplementation("org.apache.httpcomponents:httpclient:4.5.14")
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -131,25 +131,22 @@ publishing {
     }
 }
 gradlePlugin {
+    website.set("https://github.com/Liftric/octopus-deploy-plugin")
+    vcsUrl.set("https://github.com/Liftric/octopus-deploy-plugin")
     plugins {
         create("OctopusDeployPlugin") {
             id = "com.liftric.octopus-deploy-plugin"
             displayName = "octopus-deploy-plugin"
             implementationClass = "com.liftric.octopusdeploy.OctopusDeployPlugin"
             description = "Common tasks for Octopus Deploy interaction, like package or build-information uploading"
+            tags.set(listOf("octopus", "deploy", "releases", "build-information", "upload", "packages"))
         }
     }
-}
-pluginBundle {
-    website = "https://github.com/Liftric/octopus-deploy-plugin"
-    vcsUrl = "https://github.com/Liftric/octopus-deploy-plugin"
-    description = "Common tasks for Octopus Deploy interaction, like package or build-information uploading"
-    tags = listOf("octopus", "deploy", "releases", "build-information", "upload", "packages")
 }
 dockerCompose {
     useComposeFiles.set(listOf("docker-compose.yml"))
     waitForTcpPorts.set(true)
-    captureContainersOutput.set(true)
+    captureContainersOutput.set(false)
     stopContainers.set(true)
     removeContainers.set(true)
     buildBeforeUp.set(true)

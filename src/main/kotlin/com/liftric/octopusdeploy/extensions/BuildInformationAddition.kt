@@ -1,4 +1,8 @@
-package com.liftric.octopusdeploy.api
+package com.liftric.octopusdeploy.extensions
+
+import com.liftric.octopusdeploy.api.CommitCli
+import com.liftric.octopusdeploy.api.LinksCli
+import com.liftric.octopusdeploy.api.WorkItem
 
 data class BuildInformationCli(
     var Id: String? = null,
@@ -13,11 +17,11 @@ data class BuildInformationCli(
     var VcsCommitNumber: String? = null,
     var VcsCommitUrl: String? = null,
     var IssueTrackerName: String? = null,
-    var WorkItems: List<WorkItem>? = null,
-    var Commits: List<CommitCli>? = null,
+    var WorkItems: List<WorkItem> = emptyList(),
+    var Commits: List<CommitCli> = emptyList(),
     var IncompleteDataWarning: String? = null,
     var Created: String? = null,
     var LastModifiedOn: String? = null,
     var LastModifiedBy: String? = null,
-    var Links: LinksCli? = null
+    var Links: LinksCli? = null,
 )

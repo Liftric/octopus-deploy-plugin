@@ -10,39 +10,34 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
-import org.gradle.kotlin.dsl.property
+import org.gradle.work.DisableCachingByDefault
 
-open class CreateReleaseTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description = "Creates a new release."
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class CreateReleaseTask : DefaultTask() {
+    @get:Input
+    abstract val octopusUrl: Property<String>
 
-    @Input
-    val octopusUrl: Property<String> = project.objects.property()
+    @get:Input
+    abstract val apiKey: Property<String>
 
-    @Input
-    val apiKey: Property<String> = project.objects.property()
+    @get:Input
+    abstract val projectName: Property<String>
 
-    @Input
-    val projectName: Property<String> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val releaseNumber: Property<String>
 
-    @Input
-    @Optional
-    val releaseNumber: Property<String> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val dryRun: Property<Boolean>
 
-    @Input
-    @Optional
-    val dryRun: Property<Boolean> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val waitForReleaseDeployments: Property<Boolean>
 
-    @Input
-    @Optional
-    val waitForReleaseDeployments: Property<Boolean> = project.objects.property()
-
-    @Optional
-    @InputFile
-    val releaseNoteFile: RegularFileProperty = project.objects.fileProperty()
+    @get:Optional
+    @get:InputFile
+    abstract val releaseNoteFile: RegularFileProperty
 
     /**
      * Version number to use for a package

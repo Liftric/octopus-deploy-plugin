@@ -1,5 +1,6 @@
 package com.liftric.octopusdeploy.task
 
+import com.liftric.octopusdeploy.api.OverwriteMode
 import com.liftric.octopusdeploy.shell
 import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
@@ -9,63 +10,56 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
+import org.gradle.work.DisableCachingByDefault
 
-open class UploadPackageTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description = "Uploads the package to octopus."
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class UploadPackageTask : DefaultTask() {
+    @get:Input
+    abstract val octopusUrl: Property<String>
 
-    @Input
-    val octopusUrl: Property<String> = project.objects.property()
+    @get:Input
+    abstract val apiKey: Property<String>
 
-    @Input
-    val apiKey: Property<String> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val overwriteMode: Property<OverwriteMode?>
 
-    @Input
-    @Optional
-    var overwriteMode: String? = null
+    @get:Input
+    abstract val packageName: Property<String>
 
-    @Input
-    @Optional
-    val packageName: Property<String> = project.objects.property()
+    @get:Input
+    abstract val version: Property<String>
 
-    @Input
-    @Optional
-    val version: Property<String> = project.objects.property()
+    @get:Optional
+    @get:InputFile
+    abstract val pushPackage: RegularFileProperty
 
-    @Optional
-    @InputFile
-    val packageFile: RegularFileProperty = project.objects.fileProperty()
+    @get:Input
+    @get:Optional
+    abstract val waitForReleaseDeployments: Property<Boolean>
 
-    @Input
-    @Optional
-    val waitForReleaseDeployments: Property<Boolean> = project.objects.property()
-
-    @Input
-    @Optional
-    val waitTimeoutSeconds: Property<Long> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val waitTimeoutSeconds: Property<Long>
 
     /**
      * Octopus server might need longer for the deployment to trigger, so we can define an
      * additional, initial, minimum wait before the actual release check logic even happens
      */
-    @Input
-    @Optional
-    val initialWaitSeconds: Property<Long> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val initialWaitSeconds: Property<Long>
 
-    @Input
-    @Optional
-    val delayBetweenChecksSeconds: Property<Long> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val delayBetweenChecksSeconds: Property<Long>
 
     /**
      * Configures the http logging of the underlying okhttp client used for octopus api requests
      */
-    @Input
-    @Optional
-    val httpLogLevel: Property<HttpLoggingInterceptor.Level> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val httpLogLevel: Property<HttpLoggingInterceptor.Level>
 
     @TaskAction
     fun execute() {
@@ -78,8 +72,8 @@ open class UploadPackageTask : DefaultTask() {
             "--server=$octopusUrlValue",
             "--apiKey=$apiKeyValue",
             "--package",
-            packageFile.get().asFile.absolutePath ?: error("couldn't find build-information.json"),
-            overwriteMode?.let { "--overwrite-mode=$it" }
+            pushPackage.get().asFile.absolutePath ?: error("couldn't find pushPackage"),
+            overwriteMode.orNull?.let { "--overwrite-mode=$it" }
         ).filterNotNull().joinToString(" ").let { shell(it, logger) }
         if (exitCode == 0) {
             println(inputText)

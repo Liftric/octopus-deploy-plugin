@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import kotlin.random.Random
 
-class UploadBuildInformationTaskIntegrationTest {
+class UploadBuildInformationOverwriteTaskIntegrationTest {
     @get:Rule
     val testProjectDir = TemporaryFolder()
 
@@ -44,16 +44,16 @@ class UploadBuildInformationTaskIntegrationTest {
             .withProjectDir(testProjectDir.root)
             .withArguments("build", "uploadBuildInformation")
             .withPluginClasspath()
-            .buildAndFail()
+            .build()
         println(secondResult.output)
-        // override is not set
-        assertEquals(TaskOutcome.FAILED, secondResult.task(":uploadBuildInformation")?.outcome)
+        assertEquals(TaskOutcome.SUCCESS, secondResult.task(":uploadBuildInformation")?.outcome)
     }
 
     fun setupBuild(major: Int, minor: Int, micro: Int) {
         testProjectDir.newFile("build.gradle.kts").apply {
             writeText(
                 """
+import com.liftric.octopusdeploy.api.OverwriteMode
 plugins {
     java
     id("com.liftric.octopus-deploy-plugin")
@@ -74,6 +74,7 @@ octopus {
     apiKey.set("$apiKey")
 
     generateChangelogSinceLastTag.set(true)
+    buildInformationOverwriteMode.set(OverwriteMode.OverwriteExisting)
 
     val jar by tasks.existing(Jar::class)
     packageName.set(jar.get().archiveBaseName.get().removeSuffix("-"))

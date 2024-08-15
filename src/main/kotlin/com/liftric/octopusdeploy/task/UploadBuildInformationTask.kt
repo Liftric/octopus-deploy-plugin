@@ -1,41 +1,36 @@
 package com.liftric.octopusdeploy.task
 
+import com.liftric.octopusdeploy.api.OverwriteMode
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
-import java.io.File
+import org.gradle.work.DisableCachingByDefault
 
-open class UploadBuildInformationTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description = "Uploads the created octopus build-information file."
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class UploadBuildInformationTask : DefaultTask() {
+    @get:Input
+    abstract val octopusUrl: Property<String>
 
-    @Input
-    val octopusUrl: Property<String> = project.objects.property()
+    @get:Input
+    abstract val apiKey: Property<String>
 
-    @Input
-    val apiKey: Property<String> = project.objects.property()
+    @get:Input
+    abstract val packageName: Property<String>
 
-    @Input
-    val packageName: Property<String> = project.objects.property()
+    @get:Input
+    abstract val version: Property<String>
 
-    @Input
-    val version: Property<String> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val overwriteMode: Property<OverwriteMode?>
 
-    @Input
-    @Optional
-    var overwriteMode: String? = null
-
-    @InputFile
-    @Optional
-    var buildInformation: File? = null
+    @get:InputFile
+    abstract val buildInformationFile: RegularFileProperty
 
     @TaskAction
     fun execute() {
@@ -45,11 +40,11 @@ open class UploadBuildInformationTask : DefaultTask() {
             "--server=${octopusUrl.get()}",
             "--apiKey=${apiKey.get()}",
             "--file",
-            buildInformation?.absolutePath ?: error("couldn't find build-information.json"),
+            buildInformationFile.get().asFile,
             "--package-id",
             "\"${packageName.get()}\"",
             "--version=${version.get()}",
-            overwriteMode?.let { "--overwrite-mode=$it" }
+            overwriteMode.orNull?.let { "--overwrite-mode=$it" }
         ).filterNotNull().joinToString(" ").let { shell(it, logger) }
         if (exitCode == 0) {
             println(inputText)

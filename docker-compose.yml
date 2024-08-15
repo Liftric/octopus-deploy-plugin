@@ -17,7 +17,7 @@ services:
       ACCEPT_EULA: Y
       DB_CONNECTION_STRING: Server=db,1433;Database=OctopusDeploy;User=sa;Password=yourStrong(!)Password
       ADMIN_USERNAME: admin
-      ADMIN_PASSWORD: testtest123
+      ADMIN_PASSWORD: testTEST123!
       ADMIN_API_KEY: API-TESTTEST123TRESDTSDD
     ports:
       - "8080:8080"

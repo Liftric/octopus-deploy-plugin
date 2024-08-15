@@ -2,36 +2,32 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
-import java.io.File
+import org.gradle.work.DisableCachingByDefault
 
-open class PreviousTagTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description = "Calls git describe to receive the previous tag name. Will fail if no tag is found."
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class PreviousTagTask : DefaultTask() {
+    @get:Internal
+    abstract val gitRoot: DirectoryProperty
 
-    @OutputDirectory
-    lateinit var outputDir: File
-
-    @InputDirectory
-    lateinit var workingDir: File
-    @OutputFile
-    @Optional
-    var outputFile: File? = null
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
 
     @TaskAction
     fun execute() {
-        val (exitCode, inputText, errorText) = workingDir.shell("git describe --tags --abbrev=0 @^", logger)
+        val (exitCode, inputText, errorText) = gitRoot.get().asFile.shell(
+            "git describe --tags --abbrev=0 @^",
+            logger
+        )
         if (exitCode == 0) {
             logger.info("previous tag: $inputText")
-            outputFile = File(outputDir, "previousTagName").apply {
-                writeText(inputText)
-            }
+            outputFile.get().asFile.writeText(inputText)
         } else {
             logger.error("git describe returned non-zero exitCode: $exitCode")
             logger.error(errorText)
+            throw IllegalStateException("git describe exitCode: $exitCode")
         }
     }
 }

@@ -3,57 +3,60 @@ package com.liftric.octopusdeploy.task
 import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.property
-import java.io.File
+import org.gradle.work.DisableCachingByDefault
 
-open class CommitsSinceLastTagTask : DefaultTask() {
-    init {
-        group = "octopus"
-        description =
-            "Calls git log to receive all commits since the previous tag or the first commit of the current history."
-        outputs.upToDateWhen { false }
-    }
+@DisableCachingByDefault(because = "Gradle would require more information to cache this task")
+abstract class CommitsSinceLastTagTask : DefaultTask() {
+    @get:Internal
+    abstract val gitRoot: DirectoryProperty
 
-    @InputDirectory
-    lateinit var workingDir: File
+    @get:Input
+    abstract val commitLinkBaseUrl: Property<String>
 
-    @Input
-    lateinit var commitLinkBaseUrl: String
+    @get:InputFile
+    abstract val firstCommitFile: RegularFileProperty
 
-    @InputFile
-    @Optional
-    var firstCommitFile: File? = null
+    @get:InputFile
+    @get:Optional
+    abstract val previousTagFile: RegularFileProperty
 
-    @InputFile
-    @Optional
-    var previousTagFile: File? = null
+    @get:InputFile
+    @get:Optional
+    abstract val gitlabCi: Property<Boolean>
 
-    @Input
-    @Optional
-    val useShortCommitHashes: Property<Boolean> = project.objects.property()
+    @get:Input
+    abstract val useShortCommitHashes: Property<Boolean>
 
-    @Input
-    var commits: List<CommitCli> = emptyList()
+    @get:Internal
+    abstract val commits: ListProperty<CommitCli>
 
     @TaskAction
     fun execute() {
         val useShortHash = useShortCommitHashes.getOrElse(true)
-
-        val previousTag: String? = previousTagFile?.readText()
-        if (previousTag == null) {
-            logger.info("couldn't get previous tag, will use the first commit instead.")
+        val gitlabCiValue = gitlabCi.getOrElse(false)
+        val commitLinkBaseUrlValue = if (gitlabCiValue) {
+            "${System.getenv("CI_PROJECT_URL")?.removeSuffix("/")}/commit/"
+        } else {
+            commitLinkBaseUrl.get()
         }
-        val firstCommitHash: String =
-            firstCommitFile?.readText() ?: error("couldn't read firstCommitFile!")
-        val (exitCode, inputText, errorText) = workingDir.shell(
+
+        val previousTag: String? = previousTagFile.orNull?.asFile?.readText()
+        if (previousTag == null) {
+            logger.info("Couldn't get previous tag, will use the first commit instead.")
+        }
+        val firstCommitHash: String = firstCommitFile.get().asFile.readText()
+        val (exitCode, inputText, errorText) = gitRoot.get().asFile.shell(
             "git log --pretty='format:%H#%s \\(%an\\)' ${previousTag ?: firstCommitHash}..HEAD",
             logger
         )
         if (exitCode == 0) {
             logger.info("previous tag: $inputText")
-            commits = inputText.trim()
+            commits.set(inputText.trim()
                 .split("\n")
                 .map {
                     it.split("#")
@@ -62,14 +65,12 @@ open class CommitsSinceLastTagTask : DefaultTask() {
                     CommitCli(
                         Id = it[0].shorten(useShortHash),
                         Comment = it.subList(1, it.size).joinToString(" ").replace("\\", ""),
-                        LinkUrl = "${commitLinkBaseUrl.removeSuffix("/")}/${it[0]}"
+                        LinkUrl = "${commitLinkBaseUrlValue.removeSuffix("/")}/${it[0]}"
                     )
-                }.also { commits ->
-                    commits.forEach {
-                        logger.debug(it.toString())
-                        println(it.toString())
-                    }
-                }
+                }.onEach {
+                    logger.debug(it.toString())
+                    println(it.toString())
+                })
         } else {
             logger.error("git describe returned non-zero exitCode: $exitCode")
             logger.error(errorText)
