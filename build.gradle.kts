@@ -146,7 +146,7 @@ gradlePlugin {
 dockerCompose {
     useComposeFiles.set(listOf("docker-compose.yml"))
     waitForTcpPorts.set(true)
-    captureContainersOutput.set(true)
+    captureContainersOutput.set(false)
     stopContainers.set(true)
     removeContainers.set(true)
     buildBeforeUp.set(true)
