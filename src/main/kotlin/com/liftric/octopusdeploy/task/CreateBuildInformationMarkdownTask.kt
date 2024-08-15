@@ -2,7 +2,6 @@ package com.liftric.octopusdeploy.task
 
 import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.api.WorkItem
-import com.liftric.octopusdeploy.extensions.BuildInformationAdditionBuilder
 import com.liftric.octopusdeploy.extensions.BuildInformationCli
 import com.liftric.octopusdeploy.parseCommitsForJira
 import org.gradle.api.DefaultTask
@@ -28,7 +27,7 @@ abstract class CreateBuildInformationMarkdownTask : DefaultTask() {
 
     @get:Nested
     @get:Optional
-    abstract val buildInformationAddition: Property<BuildInformationAdditionBuilder>
+    abstract val buildInformationAddition: Property<BuildInformationCli.() -> Unit>
 
     @get:Optional
     @get:Input
@@ -42,10 +41,6 @@ abstract class CreateBuildInformationMarkdownTask : DefaultTask() {
     @get:Optional
     abstract val jiraBaseBrowseUrl: Property<String>
 
-    @get:Input
-    @get:Optional
-    abstract val gitlabCi: Property<Boolean>
-
     @TaskAction
     fun execute() {
         val commits = commits.getOrElse(listOf())
@@ -54,14 +49,7 @@ abstract class CreateBuildInformationMarkdownTask : DefaultTask() {
         } else {
             null
         }
-        val gitlabCi = gitlabCi.getOrElse(false)
-        val buildInformationCli: BuildInformationCli = if (gitlabCi) {
-            buildInformationAddition.orNull?.buildForGitlabCi()
-                ?: BuildInformationAdditionBuilder(project).buildForGitlabCi()
-        } else {
-            buildInformationAddition.orNull?.build() ?: BuildInformationAdditionBuilder(project).build()
-        }
-
+        val buildInformationCli = BuildInformationCli().apply(buildInformationAddition.get())
         outputFile.get().asFile.apply {
             writeText("")
             appendText("# ${packageName.get()}: ${version.get()}\n")

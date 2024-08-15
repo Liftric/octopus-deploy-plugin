@@ -2,10 +2,9 @@ package com.liftric.octopusdeploy.task
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.liftric.octopusdeploy.extensions.BuildInformationCli
 import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.api.WorkItem
-import com.liftric.octopusdeploy.extensions.BuildInformationAdditionBuilder
+import com.liftric.octopusdeploy.extensions.BuildInformationCli
 import junit.framework.TestCase.*
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -32,9 +31,7 @@ class CreateBuildInformationBuilderTaskTest {
             packageName.set("test-package")
             commits.set(createTestCommits())
             version.set("2.1.4")
-            buildInformationAddition.set(BuildInformationAdditionBuilder(project).apply{
-                Id.set("foo")
-            })
+            buildInformationAddition.set({Id = "foo"})
             outputFile.set(outputFileBuildInformation)
             issueTrackerName.set("Jira")
             parseCommitsForJiraIssues.set(true)

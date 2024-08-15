@@ -48,7 +48,7 @@ class CreateBuildInformationGitlabCiTaskTest {
             val taskResult = jacksonObjectMapper().readValue<BuildInformationCli>(readText())
             println(taskResult)
             assertEquals("foo", taskResult.Id)
-            assertEquals("GitLabCI", taskResult.BuildEnvironment)
+            assertEquals("gradle", taskResult.BuildEnvironment)
             assertEquals(envVars["CI_PIPELINE_IID"], taskResult.BuildNumber)
             assertEquals(envVars["CI_PROJECT_URL"], taskResult.VcsRoot)
             assertEquals(envVars["CI_PIPELINE_URL"], taskResult.BuildUrl)
@@ -73,9 +73,8 @@ octopus {
     gitRoot.set(file("${File("").absolutePath}"))
     packageName.set("whatever")
     serverUrl.set("whatever")
-    gitlabCi.set(true)
-    buildInformationAddition {
-       Id.set("foo")
+    gitlab {
+      Id = "foo"
     }
 }
 """

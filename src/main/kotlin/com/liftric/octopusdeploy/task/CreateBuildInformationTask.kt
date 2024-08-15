@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.liftric.octopusdeploy.api.CommitCli
 import com.liftric.octopusdeploy.api.WorkItem
-import com.liftric.octopusdeploy.extensions.BuildInformationAdditionBuilder
 import com.liftric.octopusdeploy.extensions.BuildInformationCli
 import com.liftric.octopusdeploy.parseCommitsForJira
 import org.gradle.api.DefaultTask
@@ -32,7 +31,7 @@ abstract class CreateBuildInformationTask : DefaultTask() {
 
     @get:Nested
     @get:Optional
-    abstract val buildInformationAddition: Property<BuildInformationAdditionBuilder>
+    abstract val buildInformationAddition: Property<BuildInformationCli.() -> Unit>
 
     @get:Optional
     @get:Input
@@ -46,20 +45,11 @@ abstract class CreateBuildInformationTask : DefaultTask() {
     @get:Optional
     abstract val jiraBaseBrowseUrl: Property<String>
 
-    @get:Input
-    @get:Optional
-    abstract val gitlabCi: Property<Boolean>
-
     @TaskAction
     fun execute() {
         val commits = commits.getOrElse(listOf())
-        val gitlabCi = gitlabCi.getOrElse(false)
-        val buildInformationCli: BuildInformationCli = if (gitlabCi) {
-            buildInformationAddition.orNull?.buildForGitlabCi()
-                ?: BuildInformationAdditionBuilder(project).buildForGitlabCi()
-        } else {
-            buildInformationAddition.orNull?.build() ?: BuildInformationAdditionBuilder(project).build()
-        }
+
+        val buildInformationCli = BuildInformationCli().apply(buildInformationAddition.get())
 
         val workItems: List<WorkItem>? = if (parseCommitsForJiraIssues.getOrElse(false)) {
             parseCommitsForJira(commits, jiraBaseBrowseUrl.getOrElse(""))

@@ -66,7 +66,7 @@ abstract class OctopusDeployExtension(val project: Project) {
     /**
      * Customize the final octopus build-information before uploading
      */
-    abstract val buildInformationAdditionData: Property<BuildInformationAdditionBuilder?>
+    abstract val buildInformationAddition: Property<BuildInformationCli.() -> Unit>
 
     /**
      * Configures the http logging of the underlying okhttp client used for octopus api requests
@@ -93,12 +93,24 @@ abstract class OctopusDeployExtension(val project: Project) {
      */
     abstract val useShortCommitHashes: Property<Boolean>
 
-    /**
-     * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI.
-     */
-    abstract val gitlabCi: Property<Boolean>
-}
-
-fun OctopusDeployExtension.buildInformationAddition(action: BuildInformationAdditionBuilder.() -> Unit) {
-    buildInformationAdditionData.set(BuildInformationAdditionBuilder(project).apply(action))
+    fun gitlab(additional: BuildInformationCli.() -> Unit = {}) {
+        buildInformationAddition.set({
+            BuildEnvironment = if (System.getenv("CI") != null) {
+                "GitLabCI"
+            } else {
+                "gradle"
+            }
+            BuildNumber = System.getenv("CI_PIPELINE_IID")
+            BuildUrl = System.getenv("CI_PIPELINE_URL")
+            Branch = System.getenv("CI_COMMIT_REF_NAME")
+            VcsType = "Git"
+            VcsRoot = System.getenv("CI_PROJECT_URL")
+            VcsCommitNumber = System.getenv("CI_COMMIT_SHORT_SHA")
+            VcsCommitUrl =
+                "${System.getenv("CI_PROJECT_URL")
+                    ?.removeSuffix("/")}/commit/${System.getenv("CI_COMMIT_SHA")}"
+            LastModifiedBy = System.getenv("GITLAB_USER_NAME")
+            additional()
+        })
+    }
 }

@@ -18,7 +18,7 @@ class OctopusDeployPlugin : Plugin<Project> {
         )
         extension.commitLinkBaseUrl.convention("https://git.example.com/repo/commits/")
         extension.generateChangelogSinceLastTag.convention(false)
-        extension.gitlabCi.convention(false)
+        extension.buildInformationAddition.convention({ /* no-op */ })
         extension.useShortCommitHashes.convention(true)
 
         val getFirstCommitHashTask = project.tasks.create("firstCommitHash", FirstCommitHashTask::class.java).apply {
@@ -58,8 +58,7 @@ class OctopusDeployPlugin : Plugin<Project> {
                 parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
                 jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
                 version.set(extension.version)
-                buildInformationAddition.set(extension.buildInformationAdditionData)
-                gitlabCi.set(extension.gitlabCi)
+                buildInformationAddition.set(extension.buildInformationAddition)
                 outputFile.set(extension.outputDir.file("build-information.json"))
                 commits.set(commitsSinceLastTagTask.commits)
                 dependsOn(commitsSinceLastTagTask)
@@ -75,8 +74,7 @@ class OctopusDeployPlugin : Plugin<Project> {
             parseCommitsForJiraIssues.set(extension.parseCommitsForJiraIssues)
             jiraBaseBrowseUrl.set(extension.jiraBaseBrowseUrl)
             version.set(extension.version)
-            buildInformationAddition.set(extension.buildInformationAdditionData)
-            gitlabCi.set(extension.gitlabCi)
+            buildInformationAddition.set(extension.buildInformationAddition)
             outputFile.set(extension.outputDir.file("build-information.md"))
             dependsOn(commitsSinceLastTagTask)
         }
