@@ -93,7 +93,11 @@ abstract class OctopusDeployExtension(val project: Project) {
      */
     abstract val useShortCommitHashes: Property<Boolean>
 
+    /**
+     * Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`.
+     */
     fun gitlab(additional: BuildInformationCli.() -> Unit = {}) {
+        commitLinkBaseUrl.set("${System.getenv("CI_PROJECT_URL")?.removeSuffix("/")}/commit/")
         buildInformationAddition.set({
             BuildEnvironment = if (System.getenv("CI") != null) {
                 "GitLabCI"
