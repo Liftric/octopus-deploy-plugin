@@ -90,8 +90,8 @@ version | Package version | -
 packageName | Package name | -
 buildInformationOverwriteMode | octo build-information OverwriteMode | -
 pushOverwriteMode | octo push OverwriteMode | -
-buildInformationAddition | Customize the final octopus build-information before uploading | -
-gitlabCi | Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`. | false
+buildInformationAddition | Customize the final octopus build-information before uploading | {}
+gitlab | Default `buildInformationAddition` implementation adding context from the CI environment for Gitlab CI. Also sets `commitLinkBaseUrl`. | not applied
 httpLogLevel | configures the http logging while using the Octopus API | `HttpLoggingInterceptor.Level.NONE`
 issueTrackerName | When parsing issues the target issue tracker name is needed. Currently only `Jira` supported | **optional/none**
 parseCommitsForJiraIssues | Enable Jira Issue parsing. This needs the changelog generation enabled to parse the commits there. | **optional/none**
@@ -110,19 +110,20 @@ apiKey.set(provider {
 ```
 
 To customize the build information, use the `buildInformationAddition` block:
-
 ```kotlin
-buildInformationAddition {
-    Id.set("custom-id")
-    BuildEnvironment.set("CI")
+buildInformationAddition.set({
+    Id = "custom-id"
     // Add other properties as needed
-}
+})
 
 ```
 
-For GitLab CI integration, set the `gitlabCi` property to `true`:
+For GitLab CI integration, set the `gitlab` block:
 ```kotlin
-gitlabCi.set(true)
+gitlab {
+    Id = "custom-id"
+    // Add other properties as needed
+}
 ```
 
 ### task specific configuration
